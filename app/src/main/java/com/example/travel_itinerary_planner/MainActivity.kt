@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.content.Intent
 import com.example.travel_itinerary_planner.databinding.ActivityMainBinding
+import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 
 class MainActivity : AppCompatActivity() {
 

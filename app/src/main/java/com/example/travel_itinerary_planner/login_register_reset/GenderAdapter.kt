@@ -1,4 +1,4 @@
-package com.example.travel_itinerary_planner
+package com.example.travel_itinerary_planner.login_register_reset
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.example.travel_itinerary_planner.R
 
 class GenderAdapter(context: Context, private val genders: Array<String>) :
     ArrayAdapter<String>(context, R.layout.item_gender, genders) {

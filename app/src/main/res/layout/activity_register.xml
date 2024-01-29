@@ -5,7 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
+    tools:context=".login_register_reset.RegisterActivity"
     android:background="@drawable/travel_main">
 
 
@@ -14,21 +14,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/startTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:paddingTop="40dp"
-            android:paddingBottom="5dp"
-            android:text="Let's Get Started"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="50sp"
-            android:textStyle="bold" />
+      <TextView
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:fontFamily="@font/roboto"
+          android:paddingTop="40dp"
+          android:paddingBottom="5dp"
+          android:text="Let's Get Started"
+          android:textAlignment="center"
+          android:textColor="@color/white"
+          android:textSize="50sp"
+          android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/registerTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
@@ -36,7 +34,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -148,19 +146,21 @@
                     android:padding="8dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey" />
+
                 <EditText
                     android:id="@+id/editTextPhone"
-                    android:inputType="phone"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_marginBottom="40dp"
                     android:background="@drawable/edit_text_background"
                     android:backgroundTint="#FFFFFF"
-                    android:layout_marginBottom="40dp"
-                    android:drawableStart="@drawable/baseline_mail_outline_24"
+                    android:drawableStart="@drawable/baseline_phone_24"
+
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/dark_blue"
                     android:ems="10"
-                    android:hint="Phone Number (+60)"
+                    android:hint="Phone Number (Country Code)"
+                    android:inputType="phone"
                     android:padding="8dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey" />
@@ -169,18 +169,18 @@
                     android:id="@+id/editTextPostalAddress"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
+                    android:layout_marginBottom="40dp"
                     android:background="@drawable/edit_text_background"
                     android:backgroundTint="#FFFFFF"
-                    android:layout_marginBottom="40dp"
-                    android:drawableStart="@drawable/baseline_mail_outline_24"
+                    android:drawableStart="@drawable/baseline_home_filled_24"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/dark_blue"
                     android:ems="10"
                     android:hint="Home Address"
+                    android:inputType="textPostalAddress"
                     android:padding="8dp"
                     android:textColor="@color/black"
-                    android:textColorHint="@color/light_grey"
-                    android:inputType="textPostalAddress" />
+                    android:textColorHint="@color/light_grey" />
                 <EditText
                     android:id="@+id/editTextPassword"
                     android:layout_width="match_parent"
@@ -239,7 +239,6 @@
             android:text="Register"
             android:textSize="20sp"
             android:textStyle="bold" />
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

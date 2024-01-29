@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:background="@drawable/travel_main">
+    android:background="@drawable/travel_main"
+    tools:context=".login_register_reset.LoginActivity">
 
 
     <LinearLayout
@@ -14,21 +13,19 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/startTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/roboto"
-            android:paddingTop="40dp"
-            android:paddingBottom="5dp"
-            android:text="Welcome"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="50sp"
-            android:textStyle="bold" />
+       <TextView
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:fontFamily="@font/roboto"
+           android:paddingTop="40dp"
+           android:paddingBottom="5dp"
+           android:text="Welcome"
+           android:textAlignment="center"
+           android:textColor="@color/white"
+           android:textSize="50sp"
+           android:textStyle="bold"/>
 
         <TextView
-            android:id="@+id/registerTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="@font/roboto"
@@ -36,7 +33,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="18sp"
-            android:textStyle="normal" />
+            android:textStyle="normal"/>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -49,15 +46,15 @@
                 android:orientation="vertical">
 
                 <EditText
-                    android:id="@+id/editTextEmailAddress"
+                    android:id="@+id/editTextEmail"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
 
+                    android:layout_height="50dp"
                     android:layout_marginTop="40dp"
                     android:layout_marginBottom="40dp"
                     android:background="@drawable/edit_text_background"
-                    android:backgroundTint="#FFFFFF"
 
+                    android:backgroundTint="#FFFFFF"
                     android:drawableStart="@drawable/baseline_mail_outline_24"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/dark_blue"
@@ -69,15 +66,15 @@
                     android:textColorHint="@color/light_grey" />
 
                 <EditText
-                    android:id="@+id/editTextPassword"
+                    android:id="@+id/editPassword"
+
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
 
-                    android:layout_marginBottom="40dp"
+
+
                     android:background="@drawable/edit_text_background"
                     android:backgroundTint="#FFFFFF"
-
-
                     android:drawableStart="@drawable/baseline_password_24"
                     android:drawablePadding="10dp"
                     android:drawableTint="@color/dark_blue"
@@ -87,11 +84,19 @@
                     android:padding="8dp"
                     android:textColor="@color/black"
                     android:textColorHint="@color/light_grey" />
+
+                <CheckBox
+                    android:id="@+id/checkBoxShowPassword"
+                    android:layout_width="wrap_content"
+                    android:layout_height="50dp"
+                    android:text="Show Password"
+                    android:textColor="@color/white"
+                    app:buttonTint="@color/white"/>
             </LinearLayout>
         </ScrollView>
 
         <Button
-            android:id="@+id/registerBtn"
+            android:id="@+id/loginBtn"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="30dp"

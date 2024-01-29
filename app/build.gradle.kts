@@ -4,6 +4,7 @@ plugins {
 }
 
 android {
+
     namespace = "com.example.travel_itinerary_planner"
     compileSdk = 34
 
@@ -26,6 +27,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
@@ -38,10 +40,10 @@ android {
         viewBinding = true
     }
 
+
 }
 
 dependencies {
-
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")

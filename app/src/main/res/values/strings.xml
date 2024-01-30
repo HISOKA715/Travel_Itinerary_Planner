@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Travel_Itinerary_Planner</string>
+    <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_search">Search</string>
+    <string name="title_social">Social</string>
+    <string name="title_travel">Travel</string>
+    <string name="title_profile">Profile</string>
 </resources>

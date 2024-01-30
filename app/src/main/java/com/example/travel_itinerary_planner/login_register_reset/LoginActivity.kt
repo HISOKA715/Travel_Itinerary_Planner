@@ -7,6 +7,7 @@ import android.text.InputType
 import com.example.travel_itinerary_planner.databinding.ActivityLoginBinding
 import android.util.Patterns
 import android.widget.Toast
+import com.example.travel_itinerary_planner.BottomNavigationActivity
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
@@ -54,6 +55,8 @@ class LoginActivity : AppCompatActivity() {
                 binding.editPassword.requestFocus()
                 return@setOnClickListener
             }else{
+                val intent = Intent(this, BottomNavigationActivity::class.java)
+                startActivity(intent)
                 Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
             }
         }

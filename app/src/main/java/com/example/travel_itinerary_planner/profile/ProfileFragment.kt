@@ -6,27 +6,42 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
+import androidx.navigation.fragment.findNavController
 import com.example.travel_itinerary_planner.R
-
+import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 class ProfileFragment : Fragment() {
 
-    companion object {
-        fun newInstance() = ProfileFragment()
-    }
-
-    private lateinit var viewModel: ProfileViewModel
-
+    private val binding get() = _binding!!
+    private var _binding: FragmentProfileBinding? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+
+        val profileViewModel =
+            ViewModelProvider(this).get(ProfileViewModel::class.java)
+
+        _binding = FragmentProfileBinding.inflate(inflater, container, false)
+        val root: View = binding.root
+
+        return root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(ProfileViewModel::class.java)
-        // TODO: Use the ViewModel
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+
+        binding.drawerButton.setOnClickListener {
+            val navController = findNavController()
+            navController.navigate(R.id.drawerFragment)
+        }
     }
 
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

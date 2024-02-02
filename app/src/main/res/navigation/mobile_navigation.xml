@@ -23,7 +23,7 @@
         android:label="@string/title_social"
         tools:layout="@layout/fragment_social" />
     <fragment
-        android:id="@id/navigation_travel"
+        android:id="@+id/navigation_travel"
         android:name="com.example.travel_itinerary_planner.travel.TravelFragment"
         android:label="@string/title_travel"
         tools:layout="@layout/fragment_travel" />
@@ -32,4 +32,11 @@
         android:name="com.example.travel_itinerary_planner.profile.ProfileFragment"
         android:label="@string/title_profile"
         tools:layout="@layout/fragment_profile" />
+
+    <fragment
+        android:id="@+id/drawerFragment"
+        android:name="com.example.travel_itinerary_planner.DrawerFragment"
+        android:label="Drawer Fragment"
+        tools:layout="@layout/fragment_drawer" />
+
 </navigation>

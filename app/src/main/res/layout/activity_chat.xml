@@ -61,7 +61,7 @@
 
             android:backgroundTint="@android:color/transparent"
             android:src="@drawable/baseline_send_24"
-            android:tint="@color/blue" />
+            app:tint="@color/blue" />
 
     </LinearLayout>
 

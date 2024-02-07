@@ -13,34 +13,15 @@
 
 
         <androidx.appcompat.widget.Toolbar
-
+            android:id="@+id/toolbarEmail"
             android:layout_width="match_parent"
-            android:layout_height="45dp"
+            android:layout_height="wrap_content"
             android:background="@color/white"
             android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
-
-
-            <ImageView
-
-                android:id="@+id/btnPrevious"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-
-                android:contentDescription="back"
-                android:src="@drawable/baseline_arrow_back_24" />
-
-
-            <TextView
-
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="Email Support"
-                android:textColor="@color/black"
-                android:textSize="18sp" />
-
-        </androidx.appcompat.widget.Toolbar>
+            android:theme="?attr/actionBarTheme"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:title="Email Support"
+            app:titleMarginStart="80dp" />
 
         <TextView
             android:layout_width="match_parent"
@@ -73,7 +54,6 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="15dp"
                         android:layout_marginTop="15dp"
-                        android:src="@tools:sample/avatars"
                         app:srcCompat="@drawable/baseline_mail_outline_24"
                         app:tint="@color/dark_blue" />
 

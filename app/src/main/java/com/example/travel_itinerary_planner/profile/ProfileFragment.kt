@@ -31,10 +31,15 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
-        binding.drawerButton.setOnClickListener {
-            val navController = findNavController()
-            navController.navigate(R.id.drawerFragment)
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_drawer -> {
+                    val navController = findNavController()
+                    navController.navigate(R.id.drawerFragment)
+                    true
+                }
+                else -> false
+            }
         }
     }
 

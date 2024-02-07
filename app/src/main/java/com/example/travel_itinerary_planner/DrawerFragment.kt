@@ -32,7 +32,7 @@ class DrawerFragment : Fragment() {
 
 
 
-        binding.backButton.setOnClickListener {
+        binding.toolbarSettings.setNavigationOnClickListener {
             findNavController().popBackStack()
         }
         binding.navigationPasswordSecurity.setOnClickListener {

@@ -19,31 +19,13 @@
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarSettings"
                 android:layout_width="match_parent"
-                android:layout_height="45dp"
+                android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:minHeight="?attr/actionBarSize"
-                android:theme="?attr/actionBarTheme">
-
-
-                <ImageView
-                    android:id="@+id/backButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:contentDescription="back"
-
-                    android:src="@drawable/baseline_arrow_back_24" />
-
-
-                <TextView
-                    android:id="@+id/toolbar_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="Privacy and Settings"
-                    android:textColor="@color/black"
-                    android:textSize="18sp" />
-
-            </androidx.appcompat.widget.Toolbar>
+                android:theme="?attr/actionBarTheme"
+                app:navigationIcon="@drawable/baseline_arrow_back_24"
+                app:title="Privacy and Settings"
+                app:titleMarginStart="60dp"/>
 
             <TextView
                 android:id="@+id/textView2"

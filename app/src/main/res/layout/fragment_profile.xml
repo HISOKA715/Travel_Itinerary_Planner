@@ -14,31 +14,15 @@
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:minHeight="?attr/actionBarSize"
-            android:theme="?attr/actionBarTheme">
 
-
-            <ImageButton
-                android:id="@+id/drawerButton"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:backgroundTint="@android:color/transparent"
-                android:contentDescription="Drawer"
-                android:src="@drawable/baseline_menu_24" />
-
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:backgroundTint="@android:color/transparent"
-                android:contentDescription="Add Post Button"
-                android:src="@drawable/baseline_add_box_24" />
-        </androidx.appcompat.widget.Toolbar>
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:minHeight="?attr/actionBarSize"
+                android:theme="?attr/actionBarTheme"
+                app:menu="@menu/toolbar_menu"/>
         </com.google.android.material.appbar.AppBarLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileImageView"

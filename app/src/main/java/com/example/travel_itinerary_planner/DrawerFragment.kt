@@ -59,6 +59,7 @@ class DrawerFragment : Fragment() {
         binding.navigationLogout.setOnClickListener{
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
+            requireActivity().finish()
         }
 
 

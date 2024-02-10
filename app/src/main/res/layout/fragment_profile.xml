@@ -50,7 +50,7 @@
             android:layout_gravity="center"
             android:backgroundTint="@color/blue"
             android:gravity="center"
-            android:text="Edit Profiles" />
+            android:text="Edit Profile" />
 
         <ImageButton
             android:id="@+id/postImageButton"

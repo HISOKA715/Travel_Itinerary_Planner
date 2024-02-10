@@ -1,5 +1,6 @@
 package com.example.travel_itinerary_planner.profile
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
+import com.example.travel_itinerary_planner.EditProfileActivity
+import com.example.travel_itinerary_planner.HelpCenterActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 class ProfileFragment : Fragment() {
@@ -31,6 +34,10 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.buttonEditProfile.setOnClickListener{
+            val intent = Intent(context, EditProfileActivity::class.java)
+            startActivity(intent)
+        }
         binding.toolbar.setOnMenuItemClickListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.menu_drawer -> {

@@ -12,7 +12,7 @@ class NotificationsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityNotificationsBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.toolbarNotificationSet.setOnClickListener {
+        binding.toolbarNotificationSet.setNavigationOnClickListener {
             val intent = Intent(this, BottomNavigationActivity::class.java)
             intent.putExtra("returnToDrawerFragment", true)
             startActivity(intent)

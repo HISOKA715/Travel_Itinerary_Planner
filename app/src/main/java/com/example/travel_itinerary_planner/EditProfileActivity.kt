@@ -12,7 +12,7 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.toolbarEditProfile.setOnClickListener {
+        binding.toolbarEditProfile.setNavigationOnClickListener {
             val intent = Intent(this, BottomNavigationActivity::class.java)
             intent.putExtra("returnToProfileFragment", true)
             startActivity(intent)

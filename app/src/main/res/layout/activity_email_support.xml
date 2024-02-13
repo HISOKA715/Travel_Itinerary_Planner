@@ -21,7 +21,7 @@
             android:theme="?attr/actionBarTheme"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
             app:title="Email Support"
-            app:titleMarginStart="80dp" />
+            app:titleMarginStart="70dp" />
 
         <TextView
             android:layout_width="match_parent"

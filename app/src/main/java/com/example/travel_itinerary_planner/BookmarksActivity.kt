@@ -12,7 +12,7 @@ class BookmarksActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityBookmarksBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        binding.toolbarBookmarks.setOnClickListener {
+        binding.toolbarBookmarks.setNavigationOnClickListener {
             val intent = Intent(this, BottomNavigationActivity::class.java)
             intent.putExtra("returnToDrawerFragment", true)
             startActivity(intent)

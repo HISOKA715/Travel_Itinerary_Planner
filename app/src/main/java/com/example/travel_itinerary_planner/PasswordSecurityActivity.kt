@@ -61,7 +61,7 @@ class PasswordSecurityActivity : AppCompatActivity() {
                 Toast.makeText(this, "Reset Password Successfully", Toast.LENGTH_SHORT).show()
             }
         }
-        binding.toolbarPassword.setOnClickListener {
+        binding.toolbarPassword.setNavigationOnClickListener {
             val intent = Intent(this, BottomNavigationActivity::class.java)
             intent.putExtra("returnToDrawerFragment", true)
             startActivity(intent)

@@ -22,6 +22,7 @@ class BottomNavigationActivity : AppCompatActivity() {
         val returnToDrawerFragment = intent.getBooleanExtra("returnToDrawerFragment", false)
         val navigateToDrawerFragment = intent.getBooleanExtra("navigateToDrawerFragment", false)
         val returnToProfileFragment = intent.getBooleanExtra("returnToProfileFragment", false)
+        val navigateToProfileFragment = intent.getBooleanExtra("navigateToProfileFragment", false)
         if (returnToDrawerFragment) {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
@@ -35,9 +36,16 @@ class BottomNavigationActivity : AppCompatActivity() {
             bottomNavigationView.selectedItemId = R.id.navigation_profile
             val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
             navController.navigate(R.id.drawerFragment)
-        }else if (returnToProfileFragment){
+        } else if (returnToProfileFragment){
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_profile
+
+        } else if (navigateToProfileFragment){
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_profile
+
+
         }
 
     }

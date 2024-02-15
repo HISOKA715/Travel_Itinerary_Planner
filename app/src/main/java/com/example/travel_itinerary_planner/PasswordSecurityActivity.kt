@@ -6,9 +6,10 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.travel_itinerary_planner.databinding.ActivityNewPasswordBinding
 import com.example.travel_itinerary_planner.databinding.ActivityPasswordSecurityBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 
-class PasswordSecurityActivity : AppCompatActivity() {
+class PasswordSecurityActivity : LoggedInActivity() {
     private lateinit var binding: ActivityPasswordSecurityBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

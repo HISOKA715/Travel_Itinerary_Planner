@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "905019977846",
+    "project_id": "travelitineraryplanner-ecf5a",
+    "storage_bucket": "travelitineraryplanner-ecf5a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:905019977846:android:a146cf79e8d4adcc8daf57",
+        "android_client_info": {
+          "package_name": "com.example.travel_itinerary_planner"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6YhkrKmHMRJ8OCv4MTVDrOjN0NNVsgBM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

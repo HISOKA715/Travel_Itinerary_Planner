@@ -6,9 +6,10 @@ import android.os.Bundle
 import com.example.travel_itinerary_planner.chat_email.ChatActivity
 import com.example.travel_itinerary_planner.chat_email.EmailSupportActivity
 import com.example.travel_itinerary_planner.databinding.ActivityHelpCenterBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
 
-class HelpCenterActivity : AppCompatActivity() {
+class HelpCenterActivity : LoggedInActivity() {
     private lateinit var binding: ActivityHelpCenterBinding
 
 

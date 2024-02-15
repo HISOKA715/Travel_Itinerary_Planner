@@ -10,8 +10,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.travel_itinerary_planner.databinding.ActivityAddNewPostBinding
 import com.example.travel_itinerary_planner.databinding.ActivityBookmarksBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
-class AddNewPostActivity : AppCompatActivity() {
+class AddNewPostActivity : LoggedInActivity() {
     private lateinit var binding: ActivityAddNewPostBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {

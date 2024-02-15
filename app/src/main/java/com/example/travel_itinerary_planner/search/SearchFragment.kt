@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.travel_itinerary_planner.R
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 
-class SearchFragment : Fragment() {
+class SearchFragment : LoggedInFragment() {
 
     companion object {
         fun newInstance() = SearchFragment()

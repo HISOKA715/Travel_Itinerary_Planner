@@ -1,13 +1,13 @@
 package com.example.travel_itinerary_planner
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.example.travel_itinerary_planner.databinding.ActivityBottomNavigationBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class BottomNavigationActivity : AppCompatActivity() {
+class BottomNavigationActivity : LoggedInActivity(){
 
     private lateinit var binding: ActivityBottomNavigationBinding
 

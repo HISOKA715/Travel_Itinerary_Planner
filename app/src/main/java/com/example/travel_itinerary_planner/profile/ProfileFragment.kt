@@ -23,9 +23,10 @@ import com.example.travel_itinerary_planner.EditProfileActivity
 import com.example.travel_itinerary_planner.HelpCenterActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import java.io.ByteArrayOutputStream
 
-class ProfileFragment : Fragment() {
+class ProfileFragment : LoggedInFragment() {
 
     private val binding get() = _binding!!
     private var _binding: FragmentProfileBinding? = null

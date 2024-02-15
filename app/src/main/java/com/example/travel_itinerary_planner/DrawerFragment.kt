@@ -15,11 +15,14 @@ import androidx.navigation.ui.NavigationUI.setupWithNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.example.travel_itinerary_planner.databinding.FragmentDrawerBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
-class DrawerFragment : Fragment() {
+class DrawerFragment : LoggedInFragment() {
     private var _binding: FragmentDrawerBinding? = null
+    private lateinit var auth: FirebaseAuth
     private val binding get() = _binding!!
 
     override fun onCreateView(
@@ -30,7 +33,7 @@ class DrawerFragment : Fragment() {
         _binding = FragmentDrawerBinding.inflate(inflater, container, false)
         val root: View = binding.root
 
-
+        auth = FirebaseAuth.getInstance()
 
         binding.toolbarSettings.setNavigationOnClickListener {
             findNavController().popBackStack()
@@ -57,7 +60,9 @@ class DrawerFragment : Fragment() {
             startActivity(intent)
         }
         binding.navigationLogout.setOnClickListener{
-            val intent = Intent(context, LoginActivity::class.java)
+            auth.signOut()
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
             startActivity(intent)
             requireActivity().finish()
         }

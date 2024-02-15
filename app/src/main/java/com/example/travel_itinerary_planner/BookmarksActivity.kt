@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.travel_itinerary_planner.databinding.ActivityBookmarksBinding
 import com.example.travel_itinerary_planner.databinding.ActivityNotificationsBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
-class BookmarksActivity : AppCompatActivity() {
+class BookmarksActivity : LoggedInActivity() {
     private lateinit var binding: ActivityBookmarksBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

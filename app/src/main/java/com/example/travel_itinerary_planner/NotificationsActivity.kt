@@ -5,8 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.travel_itinerary_planner.databinding.ActivityNotificationsBinding
 import com.example.travel_itinerary_planner.databinding.ActivityPasswordSecurityBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
-class NotificationsActivity : AppCompatActivity() {
+class NotificationsActivity : LoggedInActivity() {
     private lateinit var binding: ActivityNotificationsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

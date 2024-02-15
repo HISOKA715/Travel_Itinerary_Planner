@@ -8,8 +8,9 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.travel_itinerary_planner.databinding.FragmentHomeBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 
-class HomeFragment : Fragment() {
+class HomeFragment : LoggedInFragment() {
 
     private var _binding: FragmentHomeBinding? = null
 

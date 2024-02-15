@@ -6,8 +6,9 @@ import android.os.Bundle
 import com.example.travel_itinerary_planner.databinding.ActivityEditProfileBinding
 import com.example.travel_itinerary_planner.databinding.ActivityNotificationsBinding
 import com.example.travel_itinerary_planner.databinding.ActivityPersonalDetailsBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
-class PersonalDetailsActivity : AppCompatActivity() {
+class PersonalDetailsActivity : LoggedInActivity() {
     private lateinit var binding: ActivityPersonalDetailsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

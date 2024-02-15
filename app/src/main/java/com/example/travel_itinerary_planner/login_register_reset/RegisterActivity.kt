@@ -9,6 +9,9 @@ import android.text.TextWatcher
 import android.util.Patterns
 import android.widget.Toast
 import com.example.travel_itinerary_planner.databinding.ActivityRegisterBinding
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -17,16 +20,23 @@ import java.util.Locale
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
     private lateinit var textWatcher: TextWatcher
+    private lateinit var auth: FirebaseAuth
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var usersCollection: CollectionReference
+
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        auth = FirebaseAuth.getInstance()
+        firestore = FirebaseFirestore.getInstance()
+        usersCollection = firestore.collection("users")
         binding.editTextName.requestFocus()
         val genders = arrayOf("Female", "Male")
 
         val adapter = GenderAdapter(this, genders)
         binding.spinner.adapter = adapter
-
         binding.textViewLogin.setOnClickListener {
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
@@ -98,7 +108,7 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun registerBtnAction(){
+    private fun registerBtnAction() {
 
         binding.registerBtn.setOnClickListener {
             val name = binding.editTextName.text.toString().trim()
@@ -109,6 +119,7 @@ class RegisterActivity : AppCompatActivity() {
             val emailRegister = binding.editTextEmailAddress.text.toString().trim()
             val passwordRegister = binding.editTextPassword.text.toString().trim()
             val confirmPasswordRegister = binding.editTextConfirmPassword.text.toString().trim()
+            val gender = binding.spinner.selectedItem.toString().trim()
             val passwordRequirementMessage = """
                  Password must meet the criteria:
                  - At least 8 characters long
@@ -125,7 +136,7 @@ class RegisterActivity : AppCompatActivity() {
             } else if (!isNameValid(name)) {
                 binding.editTextName.error = "Name must be alphabetical"
                 binding.editTextName.requestFocus()
-            }else if (username.isEmpty()) {
+            } else if (username.isEmpty()) {
                 binding.editTextUsername.error = "Username cannot be empty"
                 binding.editTextUsername.requestFocus()
                 return@setOnClickListener
@@ -145,7 +156,7 @@ class RegisterActivity : AppCompatActivity() {
                 binding.editTextEmailAddress.error = "Enter a valid email address"
                 binding.editTextEmailAddress.requestFocus()
                 return@setOnClickListener
-            }else if (phone.isEmpty()) {
+            } else if (phone.isEmpty()) {
                 binding.editTextPhone.error = "Phone number cannot be empty"
                 binding.editTextPhone.requestFocus()
                 return@setOnClickListener
@@ -157,7 +168,7 @@ class RegisterActivity : AppCompatActivity() {
                 binding.editTextPostalAddress.error = "Home address cannot be empty"
                 binding.editTextPostalAddress.requestFocus()
                 return@setOnClickListener
-            }else if (passwordRegister.isEmpty()) {
+            } else if (passwordRegister.isEmpty()) {
                 binding.editTextPassword.error = "Password cannot be empty"
                 binding.editTextPassword.requestFocus()
                 return@setOnClickListener
@@ -174,14 +185,71 @@ class RegisterActivity : AppCompatActivity() {
                 binding.editTextConfirmPassword.requestFocus()
                 return@setOnClickListener
             } else {
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                Toast.makeText(this, "Register Successfully", Toast.LENGTH_SHORT).show()
+                auth.createUserWithEmailAndPassword(emailRegister, passwordRegister)
+                    .addOnCompleteListener(this) { task ->
+                        if (task.isSuccessful) {
+
+                            val newUser = hashMapOf(
+                                "Username" to username,
+                                "Password" to confirmPasswordRegister,
+                                "Name" to name,
+                                "DateOfBirth" to dob,
+                                "Gender" to gender,
+                                "PhoneNumber" to phone,
+                                "Email" to emailRegister,
+                                "HomeAdd" to address,
+                                "ProfileImage" to null
+                            )
+
+                            firestore.collection("users").get()
+                                .addOnSuccessListener { querySnapshot ->
+                                    val currentCount = querySnapshot.size()
+
+                                    val userIdFormatted = String.format("U%09d", currentCount + 1)
+                                    val newUserDocRef = firestore.collection("users").document(userIdFormatted)
+
+                                    newUserDocRef.set(newUser)
+                                        .addOnSuccessListener {
+                                            Toast.makeText(
+                                                this,
+                                                "Registration successful",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                            val intent = Intent(this, LoginActivity::class.java)
+                                            startActivity(intent)
+                                            finish()
+                                        }
+                                        .addOnFailureListener { e ->
+                                            Toast.makeText(
+                                                this,
+                                                "Error creating user: ${e.message}",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                }
+                                .addOnFailureListener { e ->
+                                    Toast.makeText(
+                                        this,
+                                        "Error getting user count: ${e.message}",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                        }
+                    }
+
+
+
             }
         }
     }
+
+
+
+
+
+
     private fun isNameValid(name: String): Boolean {
-        val regex = "^[a-zA-Z]+\$".toRegex()
+        val regex = "^[a-zA-Z\\s]+$".toRegex()
         return regex.matches(name)
     }
     private fun isDateValid(date: String): Boolean {
@@ -222,5 +290,5 @@ class RegisterActivity : AppCompatActivity() {
         return password.matches(passwordRegex.toRegex())
     }
 
-
 }
+

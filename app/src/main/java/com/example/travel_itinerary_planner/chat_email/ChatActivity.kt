@@ -8,8 +8,9 @@ import com.example.travel_itinerary_planner.HelpCenterActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.ActivityChatBinding
 import com.example.travel_itinerary_planner.databinding.ActivityLoginBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 
-class ChatActivity : AppCompatActivity() {
+class ChatActivity : LoggedInActivity() {
     private lateinit var binding: ActivityChatBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

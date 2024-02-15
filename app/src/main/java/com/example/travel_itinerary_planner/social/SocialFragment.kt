@@ -7,8 +7,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.travel_itinerary_planner.R
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 
-class SocialFragment : Fragment() {
+class SocialFragment : LoggedInFragment() {
 
     companion object {
         fun newInstance() = SocialFragment()

@@ -8,15 +8,17 @@ import com.example.travel_itinerary_planner.databinding.ActivityLoginBinding
 import android.util.Patterns
 import android.widget.Toast
 import com.example.travel_itinerary_planner.BottomNavigationActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
+    private lateinit var auth: FirebaseAuth
     private var isPasswordVisible = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        auth = FirebaseAuth.getInstance()
         binding.editTextEmail.requestFocus()
         binding.textViewCreateAccount.setOnClickListener {
             val intent = Intent(this, RegisterActivity::class.java)
@@ -55,9 +57,8 @@ class LoginActivity : AppCompatActivity() {
                 binding.editPassword.requestFocus()
                 return@setOnClickListener
             }else{
-                val intent = Intent(this, BottomNavigationActivity::class.java)
-                startActivity(intent)
-                Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
+                loginUser(emailLogin, passwordLogin)
+
             }
         }
         setPasswordVisibility()
@@ -66,6 +67,20 @@ class LoginActivity : AppCompatActivity() {
             setPasswordVisibility()
         }
 
+    }
+
+    private fun loginUser(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    val intent = Intent(this, BottomNavigationActivity::class.java)
+                    startActivity(intent)
+                    Toast.makeText(this, "Login Successfully", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this, "Login Failed", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
     private fun isEmailValid(email: String): Boolean {
         return Patterns.EMAIL_ADDRESS.matcher(email).matches()

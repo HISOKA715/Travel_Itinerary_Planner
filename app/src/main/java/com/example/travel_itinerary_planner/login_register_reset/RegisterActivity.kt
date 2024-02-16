@@ -188,6 +188,8 @@ class RegisterActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(emailRegister, passwordRegister)
                     .addOnCompleteListener(this) { task ->
                         if (task.isSuccessful) {
+                            val user = FirebaseAuth.getInstance().currentUser
+                            val uid = user?.uid
 
                             val newUser = hashMapOf(
                                 "Username" to username,
@@ -201,42 +203,33 @@ class RegisterActivity : AppCompatActivity() {
                                 "ProfileImage" to null
                             )
 
-                            firestore.collection("users").get()
-                                .addOnSuccessListener { querySnapshot ->
-                                    val currentCount = querySnapshot.size()
-
-                                    val userIdFormatted = String.format("U%09d", currentCount + 1)
-                                    val newUserDocRef = firestore.collection("users").document(userIdFormatted)
-
-                                    newUserDocRef.set(newUser)
-                                        .addOnSuccessListener {
-                                            Toast.makeText(
-                                                this,
-                                                "Registration successful",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                            val intent = Intent(this, LoginActivity::class.java)
-                                            startActivity(intent)
-                                            finish()
-                                        }
-                                        .addOnFailureListener { e ->
-                                            Toast.makeText(
-                                                this,
-                                                "Error creating user: ${e.message}",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+                            val newUserDocRef = firestore.collection("users").document(uid!!)
+                            newUserDocRef.set(newUser)
+                                .addOnSuccessListener {
+                                    Toast.makeText(
+                                        this,
+                                        "Registration successful",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    val intent = Intent(this, LoginActivity::class.java)
+                                    startActivity(intent)
+                                    finish()
                                 }
                                 .addOnFailureListener { e ->
                                     Toast.makeText(
                                         this,
-                                        "Error getting user count: ${e.message}",
+                                        "Error creating user: ${e.message}",
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Error creating user: ${task.exception?.message}",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
-
 
 
             }

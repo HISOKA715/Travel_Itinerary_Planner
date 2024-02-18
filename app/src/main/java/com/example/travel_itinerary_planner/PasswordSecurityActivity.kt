@@ -6,15 +6,18 @@ import android.os.Bundle
 import android.widget.Toast
 import com.example.travel_itinerary_planner.databinding.ActivityPasswordSecurityBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
+import com.google.firebase.auth.EmailAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 
 class PasswordSecurityActivity : LoggedInActivity() {
     private lateinit var binding: ActivityPasswordSecurityBinding
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPasswordSecurityBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        auth = FirebaseAuth.getInstance()
 
         binding.oldPasswordEditText.requestFocus()
         binding.buttonResetPassword.setOnClickListener {
@@ -53,11 +56,35 @@ class PasswordSecurityActivity : LoggedInActivity() {
                 binding.confirmNewPasswordEditText.requestFocus()
                 return@setOnClickListener
             } else {
-                val intent = Intent(this, BottomNavigationActivity::class.java)
-                intent.putExtra("navigateToDrawerFragment", true)
-                startActivity(intent)
-                finish()
-                Toast.makeText(this, "Reset Password Successfully", Toast.LENGTH_SHORT).show()
+                val user = auth.currentUser
+                if (user != null && user.email != null) {
+
+                    val credential = EmailAuthProvider.getCredential(user.email!!, oldPass)
+                    user.reauthenticate(credential)
+                        .addOnCompleteListener { reAuthTask ->
+                            if (reAuthTask.isSuccessful) {
+                                user.updatePassword(newPass)
+                                    .addOnCompleteListener { updatePasswordTask ->
+                                        if (updatePasswordTask.isSuccessful) {
+                                            val intent = Intent(this, BottomNavigationActivity::class.java)
+                                            intent.putExtra("navigateToDrawerFragment", true)
+                                            startActivity(intent)
+                                            finish()
+                                            Toast.makeText(this, "Update Password Successfully", Toast.LENGTH_SHORT).show()
+                                            finish()
+                                        } else {
+                                            Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                            } else {
+                                Toast.makeText(this, "Failed to re-authenticate", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                } else {
+                    Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show()
+                }
+
+
             }
         }
         binding.toolbarPassword.setNavigationOnClickListener {
@@ -68,9 +95,14 @@ class PasswordSecurityActivity : LoggedInActivity() {
         binding.textForget.setOnClickListener {
             Toast.makeText(this, "The password reset link has been sent via email", Toast.LENGTH_SHORT).show()
         }
+
     }
     private fun isPasswordValid(password: String): Boolean {
         val passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%^&*()\\-_+=\\[\\]{}|;:'\",.<>?/])(?=\\S+$).{8,}$"
         return password.matches(passwordRegex.toRegex())
     }
+
+
+
+
 }

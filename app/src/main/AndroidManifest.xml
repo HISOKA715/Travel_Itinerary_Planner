@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -23,6 +24,12 @@
         android:theme="@style/Theme.Travel_Itinerary_Planner"
         tools:targetApi="31">
         <activity
+            android:name=".profile.PostDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".chat_email.ChatActivity"
+            android:exported="false" />
+        <activity
             android:name=".logged_in.LoggedInActivity"
             android:exported="false" />
         <activity
@@ -30,9 +37,6 @@
             android:exported="false" />
         <activity
             android:name=".EditProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".chat_email.ChatActivity"
             android:exported="false" />
         <activity
             android:name=".chat_email.EmailSupportActivity"

@@ -50,7 +50,6 @@
             android:layout_marginBottom="15dp"
             android:background="@drawable/edit_text_background"
             android:drawableStart="@drawable/baseline_email_24"
-            android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:drawableTint="@color/dark_blue"
             android:drawablePadding="10dp"
             android:ems="10"
@@ -74,11 +73,11 @@
             android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:drawableTint="@color/dark_blue"
             android:ems="10"
-            android:enabled="false"
             android:focusable="false"
             android:inputType="phone"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:tag="PhoneNumber"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -102,11 +101,11 @@
             android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:drawableTint="@color/dark_blue"
             android:ems="10"
-            android:enabled="false"
             android:focusable="false"
             android:inputType="textPersonName"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:tag="Name"/>
 
         <EditText
 
@@ -122,11 +121,11 @@
             android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:drawableTint="@color/dark_blue"
             android:ems="10"
-            android:enabled="false"
             android:focusable="false"
             android:inputType="date"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:tag="DateOfBirth"/>
 
         <EditText
 
@@ -141,11 +140,11 @@
             android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
             android:drawableTint="@color/dark_blue"
             android:ems="10"
-            android:enabled="false"
             android:focusable="false"
             android:inputType="textPostalAddress"
             android:padding="8dp"
-            android:textColor="@color/black" />
+            android:textColor="@color/black"
+            android:tag="HomeAdd"/>
 
     </LinearLayout>
 

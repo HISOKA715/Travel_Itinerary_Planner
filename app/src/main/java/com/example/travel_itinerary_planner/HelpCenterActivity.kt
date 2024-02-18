@@ -1,7 +1,6 @@
 package com.example.travel_itinerary_planner
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.travel_itinerary_planner.chat_email.ChatActivity
 import com.example.travel_itinerary_planner.chat_email.EmailSupportActivity

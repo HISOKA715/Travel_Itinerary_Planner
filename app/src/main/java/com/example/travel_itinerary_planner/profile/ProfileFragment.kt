@@ -9,50 +9,60 @@ import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.provider.MediaStore
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.travel_itinerary_planner.AddNewPostActivity
-import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.EditProfileActivity
-import com.example.travel_itinerary_planner.HelpCenterActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.toObject
 import java.io.ByteArrayOutputStream
 
-class ProfileFragment : LoggedInFragment() {
+class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListener  {
 
     private val binding get() = _binding!!
     private var _binding: FragmentProfileBinding? = null
+    private lateinit var firestore: FirebaseFirestore
+    private lateinit var socialMediaAdapter: SocialMediaAdapter
+    private lateinit var auth: FirebaseAuth
+    private lateinit var viewModel: ProfileViewModel
 
     companion object {
         private const val REQUEST_IMAGE_PICK = 1001
         private const val REQUEST_IMAGE_CAPTURE = 1002
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         val profileViewModel =
-            ViewModelProvider(this).get(ProfileViewModel::class.java)
+            ViewModelProvider(this)[ProfileViewModel::class.java]
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
-        val root: View = binding.root
 
-        return root
+        return binding.root
     }
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.buttonEditProfile.setOnClickListener{
+        firestore = FirebaseFirestore.getInstance()
+        auth = FirebaseAuth.getInstance()
+        viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+        binding.buttonEditProfile.setOnClickListener {
             val intent = Intent(context, EditProfileActivity::class.java)
             startActivity(intent)
         }
@@ -67,12 +77,52 @@ class ProfileFragment : LoggedInFragment() {
                     selectImageFromGalleryOrCamera()
                     true
                 }
-
                 else -> false
             }
         }
+        socialMediaAdapter = SocialMediaAdapter(this)
 
+        binding.postRecycleView.apply {
+            layoutManager = GridLayoutManager(requireContext(), 3)
+            adapter = socialMediaAdapter
+        }
+
+        retrieveSocialMediaPosts()
     }
+    override fun onItemClick(socialMediaPost: SocialMediaPost) {
+        val intent = Intent(context, PostDetailsActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun retrieveSocialMediaPosts() {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+        firestore.collection("SocialMedia")
+            .whereEqualTo("UserID", currentUserUid)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val socialMediaPosts = mutableListOf<SocialMediaPost>()
+                for (document in querySnapshot.documents) {
+                    val post = document.toObject(SocialMediaPost::class.java)
+                    post?.let {
+                        socialMediaPosts.add(it)
+                    }
+                }
+                socialMediaAdapter.submitList(socialMediaPosts)
+            }
+            .addOnFailureListener { e ->
+                // Handle failure
+            }
+    }
+
+
+
+
+
+
+
+
+
+
     private fun selectImageFromGalleryOrCamera() {
         val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")
         val builder: AlertDialog.Builder = AlertDialog.Builder(context)

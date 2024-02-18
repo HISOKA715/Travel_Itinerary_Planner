@@ -1,7 +1,15 @@
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+        
+    }
+}
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("kotlin-kapt")
 }
 
 android {
@@ -44,7 +52,12 @@ android {
 
 }
 
+
+
 dependencies {
+    implementation ("com.github.bumptech.glide:glide:4.12.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
+    implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-firestore:24.10.2")
     implementation ("com.google.firebase:firebase-auth:22.3.1")

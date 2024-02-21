@@ -40,10 +40,8 @@ class AddNewPostActivity : LoggedInActivity() {
         binding.buttonAddPost.setOnClickListener {
             addPostToFirestore()
 
-            val intent = Intent(this, BottomNavigationActivity::class.java)
-            intent.putExtra("navigateToProfileFragment", true)
-            startActivity(intent)
-            Toast.makeText(this, "Create New Post Successfully", Toast.LENGTH_SHORT).show()
+
+
 
 
         }
@@ -56,12 +54,12 @@ class AddNewPostActivity : LoggedInActivity() {
 
 
 
-        firestore.collection("posts")
+        firestore.collection("SocialMedia")
             .get()
             .addOnSuccessListener { querySnapshot ->
-
-
                 val socialId = String.format("S%09d", querySnapshot.size() + 1)
+
+
 
                 val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
                 val currentDate = dateFormat.format(Date())
@@ -80,6 +78,9 @@ class AddNewPostActivity : LoggedInActivity() {
                 firestore.collection("SocialMedia").document(socialId)
                     .set(post)
                     .addOnSuccessListener { documentReference ->
+                        val intent = Intent(this, BottomNavigationActivity::class.java)
+                        intent.putExtra("navigateToProfileFragment", true)
+                        startActivity(intent)
                         Toast.makeText(this,"Post added successfully", Toast.LENGTH_SHORT).show()
                         finish()
                     }

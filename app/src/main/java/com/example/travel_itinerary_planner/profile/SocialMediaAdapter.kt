@@ -46,6 +46,7 @@ class SocialMediaAdapter(private val listener: OnItemClickListener) :
 
     override fun onBindViewHolder(holder: SocialMediaViewHolder, position: Int) {
         holder.bind(socialMediaPosts[position])
+
     }
 
     override fun getItemCount(): Int {

@@ -36,7 +36,14 @@
     <fragment
         android:id="@+id/drawerFragment"
         android:name="com.example.travel_itinerary_planner.DrawerFragment"
-        android:label="Drawer Fragment"
+        android:label="Drawer"
         tools:layout="@layout/fragment_drawer" />
+    <fragment
+        android:id="@+id/postDetailsFragment"
+        android:name="com.example.travel_itinerary_planner.social.PostDetailsFragment"
+        android:label="PostDetails"
+        tools:layout="@layout/fragment_post_details" />
+
+
 
 </navigation>

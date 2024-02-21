@@ -39,7 +39,7 @@ class PasswordSecurityActivity : LoggedInActivity() {
             } else if (!isPasswordValid(oldPass)) {
                 binding.oldPasswordEditText.error = passwordRequirementMessage
                 binding.oldPasswordEditText.requestFocus()
-            }else if (newPass.isEmpty()) {
+            } else if (newPass.isEmpty()) {
                 binding.newPasswordEditText.error = "Password cannot be empty"
                 binding.newPasswordEditText.requestFocus()
                 return@setOnClickListener
@@ -47,7 +47,7 @@ class PasswordSecurityActivity : LoggedInActivity() {
                 binding.newPasswordEditText.error = passwordRequirementMessage
                 binding.newPasswordEditText.requestFocus()
                 return@setOnClickListener
-            } else if (confirmPass.isEmpty()){
+            } else if (confirmPass.isEmpty()) {
                 binding.confirmNewPasswordEditText.error = "Confirm Password cannot be empty"
                 binding.confirmNewPasswordEditText.requestFocus()
                 return@setOnClickListener
@@ -66,18 +66,31 @@ class PasswordSecurityActivity : LoggedInActivity() {
                                 user.updatePassword(newPass)
                                     .addOnCompleteListener { updatePasswordTask ->
                                         if (updatePasswordTask.isSuccessful) {
-                                            val intent = Intent(this, BottomNavigationActivity::class.java)
+                                            val intent =
+                                                Intent(this, BottomNavigationActivity::class.java)
                                             intent.putExtra("navigateToDrawerFragment", true)
                                             startActivity(intent)
                                             finish()
-                                            Toast.makeText(this, "Update Password Successfully", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this,
+                                                "Update Password Successfully",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                             finish()
                                         } else {
-                                            Toast.makeText(this, "Failed to update password", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this,
+                                                "Failed to update password",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                         }
                                     }
                             } else {
-                                Toast.makeText(this, "Failed to re-authenticate", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this,
+                                    "Failed to re-authenticate",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
                         }
                 } else {
@@ -93,12 +106,34 @@ class PasswordSecurityActivity : LoggedInActivity() {
             startActivity(intent)
         }
         binding.textForget.setOnClickListener {
-            Toast.makeText(this, "The password reset link has been sent via email", Toast.LENGTH_SHORT).show()
+            val email = auth.currentUser?.email
+            if (email != null) {
+                auth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            Toast.makeText(
+                                this,
+                                "Password reset link sent to $email",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                this,
+                                "Failed to send password reset email",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(this, "User not signed in", Toast.LENGTH_SHORT).show()
+            }
         }
 
     }
+
     private fun isPasswordValid(password: String): Boolean {
-        val passwordRegex = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%^&*()\\-_+=\\[\\]{}|;:'\",.<>?/])(?=\\S+$).{8,}$"
+        val passwordRegex =
+            "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#\$%^&*()\\-_+=\\[\\]{}|;:'\",.<>?/])(?=\\S+$).{8,}$"
         return password.matches(passwordRegex.toRegex())
     }
 

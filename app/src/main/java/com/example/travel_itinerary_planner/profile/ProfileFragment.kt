@@ -14,19 +14,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.travel_itinerary_planner.AddNewPostActivity
-import com.example.travel_itinerary_planner.EditProfileActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
+import com.example.travel_itinerary_planner.social.PostDetailsFragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.QuerySnapshot
-import com.google.firebase.firestore.toObject
 import java.io.ByteArrayOutputStream
 
 class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListener  {
@@ -48,8 +47,7 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
         savedInstanceState: Bundle?
     ): View? {
 
-        val profileViewModel =
-            ViewModelProvider(this)[ProfileViewModel::class.java]
+
 
         _binding = FragmentProfileBinding.inflate(inflater, container, false)
 
@@ -59,9 +57,11 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+        fetchProfilePictureFromFirestore()
         binding.buttonEditProfile.setOnClickListener {
             val intent = Intent(context, EditProfileActivity::class.java)
             startActivity(intent)
@@ -86,12 +86,17 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
             layoutManager = GridLayoutManager(requireContext(), 3)
             adapter = socialMediaAdapter
         }
+        val currentUser = auth.currentUser
+        val userId = currentUser?.uid
 
+        userId?.let { fetchUserData(it) }
         retrieveSocialMediaPosts()
     }
     override fun onItemClick(socialMediaPost: SocialMediaPost) {
-        val intent = Intent(context, PostDetailsActivity::class.java)
-        startActivity(intent)
+        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
+        bottomNavigationView.selectedItemId = R.id.navigation_profile
+        val navController = findNavController()
+        navController.navigate(R.id.postDetailsFragment)
     }
 
     private fun retrieveSocialMediaPosts() {
@@ -110,11 +115,35 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
                 socialMediaAdapter.submitList(socialMediaPosts)
             }
             .addOnFailureListener { e ->
-                // Handle failure
             }
     }
 
+    private fun fetchProfilePictureFromFirestore() {
+        val user = FirebaseAuth.getInstance().currentUser
+        user?.let { currentUser ->
+            val firestore = FirebaseFirestore.getInstance()
+            val userRef = firestore.collection("users").document(currentUser.uid)
 
+            userRef.get()
+                .addOnSuccessListener { documentSnapshot ->
+                    if (documentSnapshot.exists()) {
+                        val profilePictureUri = documentSnapshot.getString("ProfileImage")
+                        profilePictureUri?.let { uri ->
+
+                            Glide.with(this)
+                                .load(uri)
+                                .override(300, 300)
+                                .error(R.drawable.travel_main)
+                                .centerCrop()
+                                .into(binding.profileImageView)
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Toast.makeText(context, "Failed to fetch profile picture", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
 
 
 
@@ -187,6 +216,27 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
                 val selectedImageUri = it.data
                 navigateToAddNewPost(selectedImageUri!!)
             }
+
+        }
+    }
+    private fun fetchUserData(userId: String) {
+        val userRef = firestore.collection("users").document(userId)
+
+        userRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    val userData = document.data
+                    userData?.let { populateEditTextFields(it) }
+                }
+            }
+            .addOnFailureListener { exception ->
+            }
+    }
+
+    private fun populateEditTextFields(userData: Map<String, Any>) {
+        binding.apply {
+            val username = userData["Username"].toString()
+            usernameText.text = username
 
         }
     }

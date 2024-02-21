@@ -68,7 +68,7 @@ class PersonalDetailsActivity : LoggedInActivity() {
     }
 
     private fun showUpdateDialog(editText: EditText) {
-        val currentValue = editText.text.toString()
+        val currentValue = editText.text?.toString() ?: ""
 
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Update")

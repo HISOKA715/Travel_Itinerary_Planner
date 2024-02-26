@@ -33,6 +33,9 @@ class SocialMediaAdapter(private val listener: OnItemClickListener) :
                 .into(binding.imageViewPost)
         }
     }
+    fun getSocialMediaPosts(): List<SocialMediaPost> {
+        return socialMediaPosts
+    }
 
     interface OnItemClickListener {
         fun onItemClick(socialMediaPost: SocialMediaPost)
@@ -45,8 +48,12 @@ class SocialMediaAdapter(private val listener: OnItemClickListener) :
     }
 
     override fun onBindViewHolder(holder: SocialMediaViewHolder, position: Int) {
-        holder.bind(socialMediaPosts[position])
+        val currentItem = socialMediaPosts[position]
+        holder.bind(currentItem)
+        holder.itemView.setOnClickListener {
+            listener.onItemClick(currentItem)
 
+        }
     }
 
     override fun getItemCount(): Int {

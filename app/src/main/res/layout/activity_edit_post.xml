@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".AddNewPostActivity">
+    tools:context=".social.EditPostActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -12,14 +12,14 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarAddNewPost"
+            android:id="@+id/toolbarEditPost"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:navigationIcon="@drawable/baseline_arrow_back_24"
-            app:title="New Post"
+            app:title="Edit Post"
             app:titleMarginStart="100dp" />
 
         <ScrollView
@@ -33,14 +33,14 @@
                 android:orientation="vertical">
 
                 <ImageView
-                    android:id="@+id/imagePost"
+                    android:id="@+id/imageEditPost"
                     android:layout_width="250dp"
                     android:layout_height="200dp"
                     android:layout_gravity="center"
                     android:layout_margin="20dp" />
 
                 <EditText
-                    android:id="@+id/multilineDescribe"
+                    android:id="@+id/multilineEditDescribe"
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:background="@android:color/transparent"
@@ -59,7 +59,7 @@
                     android:background="@android:color/darker_gray" />
 
                 <EditText
-                    android:id="@+id/locationEditText"
+                    android:id="@+id/locationEdit"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="15dp"
@@ -78,7 +78,7 @@
                     android:textColor="@color/black" />
 
                 <EditText
-                    android:id="@+id/sharingOptionsEditText"
+                    android:id="@+id/sharingOptionsEdit"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:layout_marginStart="15dp"
@@ -100,7 +100,7 @@
         </ScrollView>
 
         <Button
-            android:id="@+id/buttonAddPost"
+            android:id="@+id/buttonEditPost"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginStart="25dp"
@@ -109,7 +109,7 @@
             android:layout_marginBottom="10dp"
             android:backgroundTint="@color/blue"
             android:fontFamily="@font/roboto"
-            android:text="Share"
+            android:text="Done Edit"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>

@@ -1,72 +1,99 @@
 package com.example.travel_itinerary_planner.social
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
+import com.example.travel_itinerary_planner.databinding.ItemAllPostBinding
 import com.example.travel_itinerary_planner.databinding.ItemSocialMediaBinding
 import com.example.travel_itinerary_planner.profile.SocialMediaPost
 import com.example.travel_itinerary_planner.social.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, private val bookmarkListener: OnBookmarkClickListener) : RecyclerView.Adapter<SocialPostAdapter.SocialPostViewHolder>() {
+class AllSocialPostAdapter(private val bookmarkListener: OnBookmarkClickListener) : RecyclerView.Adapter<AllSocialPostAdapter.AllSocialPostViewHolder>() {
 
     private var socialPosts: List<SocialMediaPost> = ArrayList()
     private var userDataMap: Map<String, UserData?> = HashMap()
     private var isExpandedMap: MutableMap<Int, Boolean> = HashMap()
     private lateinit var firestore: FirebaseFirestore
-    inner class SocialPostViewHolder(private val binding: ItemSocialMediaBinding) :
+    inner class AllSocialPostViewHolder(private val binding: ItemAllPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(socialPost: SocialMediaPost, userData: UserData?) {
             firestore = FirebaseFirestore.getInstance()
-            binding.postContentTextView.text = socialPost.SocialContent
-            binding.commentsCountTextView.text = socialPost.SocialCommentCounts
-            binding.postDateTextView.text = socialPost.SocialDate
-            binding.textLocation.text = socialPost.SocialLocation
-            binding.userNameTextView.setOnClickListener { view ->
+            binding.postContent.text = socialPost.SocialContent
+            binding.commentsCount.text = socialPost.SocialCommentCounts
+            binding.postDate.text = socialPost.SocialDate
+            binding.textViewLocation.text = socialPost.SocialLocation
+
+            binding.userName.setOnClickListener { view ->
                 val position = adapterPosition
                 val socialPost = socialPosts[position]
                 val userId = socialPost.UserID
 
                 if (userId == FirebaseAuth.getInstance().currentUser?.uid) {
-                    view.findNavController().navigate(R.id.navigation_profile)
+                    val intent = Intent(view.context, BottomNavigationActivity::class.java)
+                    intent.putExtra("navigateToProfileFragment", true)
+                    view.context.startActivity(intent)
+                } else {
+                    val bundle = Bundle().apply {
+                        putString("userId", userId)
+                    }
+                    view.findNavController().navigate(R.id.navigation_others_profile, bundle)
                 }
+
             }
-            binding.userProfileImageView.setOnClickListener { view ->
+
+
+
+
+
+            binding.userProfile.setOnClickListener { view ->
                 val position = adapterPosition
                 val socialPost = socialPosts[position]
                 val userId = socialPost.UserID
 
                 if (userId == FirebaseAuth.getInstance().currentUser?.uid) {
-                    view.findNavController().navigate(R.id.navigation_profile)
+                    val intent = Intent(view.context, BottomNavigationActivity::class.java)
+                    intent.putExtra("navigateToProfileFragment", true)
+                    view.context.startActivity(intent)
+                } else {
+                    val bundle = Bundle().apply {
+                        putString("userId", userId)
+                    }
+                    view.findNavController().navigate(R.id.navigation_others_profile, bundle)
                 }
             }
 
-            binding.postContentTextView.setOnClickListener {
-                toggleExpandCollapse(binding.postContentTextView)
+
+
+            binding.postContent.setOnClickListener {
+                toggleExpandCollapse(binding.postContent)
             }
 
             if (isExpandedMap[adapterPosition] == true) {
-                expandTextView(binding.postContentTextView)
+                expandTextView(binding.postContent)
             } else {
-                collapseTextView(binding.postContentTextView)
+                collapseTextView(binding.postContent)
             }
             Glide.with(binding.root)
                 .load(socialPost.SocialImage)
                 .error(R.drawable.travel_main)
                 .override(300, 300)
                 .centerCrop()
-                .into(binding.postImageView)
+                .into(binding.postImage)
 
             userData?.let {
                 Glide.with(binding.root)
@@ -74,23 +101,9 @@ class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, privat
                     .error(R.drawable.travel_main)
                     .override(300, 300)
                     .circleCrop()
-                    .into(binding.userProfileImageView)
+                    .into(binding.userProfile)
 
-                binding.userNameTextView.text = it.Username
-            }
-            binding.imageViewMore.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val post = socialPosts[position]
-                    listener.onMoreOptionsClick(post)
-                }
-            }
-            binding.bookmarkImageView.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val post = socialPosts[position]
-                    bookmarkListener.onBookmarkClick(post, binding)
-                }
+                binding.userName.text = it.Username
             }
             val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
             if (currentUserUid != null) {
@@ -101,16 +114,22 @@ class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, privat
 
                 bookmarkQuery.get().addOnSuccessListener { querySnapshot ->
                     if (!querySnapshot.isEmpty) {
-                        binding.bookmarkImageView.setColorFilter(
+                        binding.bookmarkIcon.setColorFilter(
                             ContextCompat.getColor(itemView.context, R.color.blue
                             )
                         )
                     } else {
-                        binding.bookmarkImageView.setColorFilter(
+                        binding.bookmarkIcon.setColorFilter(
                             ContextCompat.getColor(itemView.context, R.color.dark_blue
                             )
                         )
                     }
+                }
+            }
+            binding.bookmarkIcon.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    bookmarkListener.onBookmarkClick(socialPosts[position], binding)
                 }
             }
 
@@ -118,28 +137,19 @@ class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, privat
     }
 
     interface OnBookmarkClickListener {
-        fun onBookmarkClick(socialMediaPost: SocialMediaPost, binding: ItemSocialMediaBinding)
+        fun onBookmarkClick(socialMediaPost: SocialMediaPost, binding: ItemAllPostBinding)
     }
-
-    interface OnMoreOptionsClickListener {
-        fun onMoreOptionsClick(socialMediaPost: SocialMediaPost)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SocialPostViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AllSocialPostViewHolder {
         val inflater = LayoutInflater.from(parent.context)
-        val binding = ItemSocialMediaBinding.inflate(inflater, parent, false)
-        return SocialPostViewHolder(binding)
+        val binding = ItemAllPostBinding.inflate(inflater, parent, false)
+        return AllSocialPostViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: SocialPostViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: AllSocialPostViewHolder, position: Int) {
         val socialPost = socialPosts[position]
         val userData = userDataMap[socialPost.UserID]
         holder.bind(socialPost, userData)
-
-
-
     }
-
     override fun getItemCount(): Int {
         return socialPosts.size
     }
@@ -149,7 +159,6 @@ class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, privat
         this.userDataMap = userDataMap
         notifyDataSetChanged()
     }
-
     private fun expandTextView(textView: TextView) {
         textView.maxLines = Int.MAX_VALUE
         textView.ellipsize = null
@@ -173,3 +182,5 @@ class SocialPostAdapter(private val listener: OnMoreOptionsClickListener, privat
         }
     }
 }
+
+

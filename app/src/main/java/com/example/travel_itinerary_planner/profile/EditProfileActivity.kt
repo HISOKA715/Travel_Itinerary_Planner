@@ -5,12 +5,15 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContentProviderCompat.requireContext
 import com.bumptech.glide.Glide
 import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
@@ -19,6 +22,10 @@ import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 class EditProfileActivity : LoggedInActivity() {
     private lateinit var binding: ActivityEditProfileBinding
@@ -193,16 +200,18 @@ class EditProfileActivity : LoggedInActivity() {
         galleryLauncher.launch(galleryIntent)
     }
 
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path: String = MediaStore.Images.Media.insertImage(
-            inContext.contentResolver,
-            inImage,
-            "Title",
+    private fun getImageUri(context: Context, bitmap: Bitmap): Uri? {
+        return try {
+            val imagesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val imageFile = File.createTempFile("Title", ".jpg", imagesDir)
+            val outputStream = FileOutputStream(imageFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.close()
+            Uri.fromFile(imageFile)
+        } catch (e: IOException) {
+            e.printStackTrace()
             null
-        )
-        return Uri.parse(path)
+        }
     }
 
     private fun navigate(selectedImageUri: Uri) {
@@ -225,31 +234,72 @@ class EditProfileActivity : LoggedInActivity() {
     }
 
 
+
     private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             data?.let {
-
-                val photo: Bitmap = it.extras?.get("data") as Bitmap
-                val selectedImageUri = getImageUri(this, photo)
-                navigate(selectedImageUri)
+                val photo: Bitmap? = it.extras?.get("data") as? Bitmap
+                photo?.let { bitmap ->
+                    val resizedBitmap = resizeBitmap(bitmap)
+                    val selectedImageUri = getImageUri(this, resizedBitmap)
+                    navigate(selectedImageUri!!)
+                }
             }
-
         }
     }
+
 
 
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            data?.let {
-
-                val selectedImageUri = it.data
-                navigate(selectedImageUri!!)
+            data?.let { data: Intent ->
+                val selectedImageUri = data.data
+                selectedImageUri?.let { uri ->
+                    val inputStream = this.contentResolver.openInputStream(uri)
+                    inputStream?.use { stream: InputStream ->
+                        val bitmap = BitmapFactory.decodeStream(stream)
+                        val resizedBitmap = resizeBitmap(bitmap)
+                        val resizedImageUri = getImageUri(this, resizedBitmap)
+                        navigate(resizedImageUri!!)
+                    }
+                }
             }
-
         }
     }
+
+
+
+    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
+        val maxWidth = 1024
+        val maxHeight = 1024
+
+        val width = bitmap.width
+        val height = bitmap.height
+
+        if (width <= maxWidth && height <= maxHeight) {
+            return bitmap
+        }
+
+
+        val ratio: Float = width.toFloat() / height.toFloat()
+
+
+        val finalWidth: Int
+        val finalHeight: Int
+        if (width > height) {
+            finalWidth = minOf(width, maxWidth)
+            finalHeight = (finalWidth / ratio).toInt()
+        } else {
+            finalHeight = minOf(height, maxHeight)
+            finalWidth = (finalHeight * ratio).toInt()
+        }
+
+
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
+    }
+
 
 
 }

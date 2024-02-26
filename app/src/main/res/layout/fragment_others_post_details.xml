@@ -10,18 +10,18 @@
         android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbarSocial"
+            android:id="@+id/toolbarOthersPostDetails"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
-            app:title="Roam Ease"
-            app:titleTextAppearance="@style/ToolbarTitleStyle"
-            app:menu="@menu/social_menu"/>
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:title="Posts"
+            app:titleMarginStart="120dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewAllPosts"
+            android:id="@+id/recyclerViewOthersPostDetails"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 

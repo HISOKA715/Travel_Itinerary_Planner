@@ -20,7 +20,7 @@
 
 
             <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/userProfileImageView"
+                android:id="@+id/userProfile"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:src="@drawable/travel_main" />
@@ -31,7 +31,7 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/userNameTextView"
+                    android:id="@+id/userName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -40,7 +40,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/textLocation"
+                    android:id="@+id/textViewLocation"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
@@ -55,17 +55,17 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:id="@+id/imageViewMore"
+                android:id="@+id/viewMore"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
-                app:srcCompat="@drawable/baseline_more_vert_24"
-                app:tint="@color/dark_blue" />
+                app:tint="@color/dark_blue"
+                app:srcCompat="@drawable/baseline_more_vert_24" />
 
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/postImageView"
+            android:id="@+id/postImage"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_marginTop="8dp"
@@ -75,12 +75,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
+            android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:layout_marginTop="8dp">
 
             <ImageView
-                android:id="@+id/commentsIconImageView"
+                android:id="@+id/commentsIcon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
@@ -93,17 +93,17 @@
                 android:layout_weight="1" />
 
             <ImageView
-                android:id="@+id/bookmarkImageView"
+                android:id="@+id/bookmarkIcon"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_margin="5dp"
-                app:srcCompat="@drawable/baseline_bookmark_24"
-                app:tint="@color/dark_blue" />
+                app:tint="@color/dark_blue"
+                app:srcCompat="@drawable/baseline_bookmark_24" />
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/postContentTextView"
+            android:id="@+id/postContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
@@ -114,7 +114,7 @@
             android:onClick="toggleExpandCollapse" />
 
         <TextView
-            android:id="@+id/commentsCountTextView"
+            android:id="@+id/commentsCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="4dp"
@@ -122,7 +122,7 @@
             android:textSize="12sp" />
 
         <TextView
-            android:id="@+id/postDateTextView"
+            android:id="@+id/postDate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Date"

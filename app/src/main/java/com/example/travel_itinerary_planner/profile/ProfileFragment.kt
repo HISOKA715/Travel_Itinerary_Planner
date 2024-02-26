@@ -5,9 +5,11 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -17,6 +19,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.bumptech.glide.Glide
 import com.example.travel_itinerary_planner.AddNewPostActivity
 import com.example.travel_itinerary_planner.R
@@ -27,6 +30,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.InputStream
 
 class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListener  {
 
@@ -70,7 +77,7 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
             when (menuItem.itemId) {
                 R.id.menu_drawer -> {
                     val navController = findNavController()
-                    navController.navigate(R.id.drawerFragment)
+                    navController.navigate(R.id.navigation_drawer)
                     true
                 }
                 R.id.menu_add_post -> {
@@ -83,8 +90,11 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
         socialMediaAdapter = SocialMediaAdapter(this)
 
         binding.postRecycleView.apply {
-            layoutManager = GridLayoutManager(requireContext(), 3)
-            adapter = socialMediaAdapter
+            val layoutManager = StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.VERTICAL)
+            binding.postRecycleView.layoutManager = layoutManager
+            binding.postRecycleView.adapter = socialMediaAdapter
+
+
         }
         val currentUser = auth.currentUser
         val userId = currentUser?.uid
@@ -93,11 +103,20 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
         retrieveSocialMediaPosts()
     }
     override fun onItemClick(socialMediaPost: SocialMediaPost) {
-        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
-        bottomNavigationView.selectedItemId = R.id.navigation_profile
+        val position = socialMediaAdapter.getSocialMediaPosts().indexOf(socialMediaPost)
+
+        val bundle = Bundle()
+        bundle.putInt("position", position)
+
+
+        val postDetailsFragment = PostDetailsFragment()
+        postDetailsFragment.arguments = bundle
+
+
         val navController = findNavController()
-        navController.navigate(R.id.postDetailsFragment)
+        navController.navigate(R.id.navigation_post_details, bundle)
     }
+
 
     private fun retrieveSocialMediaPosts() {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
@@ -109,7 +128,7 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
                 for (document in querySnapshot.documents) {
                     val post = document.toObject(SocialMediaPost::class.java)
                     post?.let {
-                        socialMediaPosts.add(it)
+                        socialMediaPosts.add(0,it)
                     }
                 }
                 socialMediaAdapter.submitList(socialMediaPosts)
@@ -176,17 +195,47 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
         galleryLauncher.launch(galleryIntent)
     }
 
-    private fun getImageUri(inContext: Context, inImage: Bitmap): Uri {
-        val bytes = ByteArrayOutputStream()
-        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
-        val path: String = MediaStore.Images.Media.insertImage(
-            inContext.contentResolver,
-            inImage,
-            "Title",
+    private fun getImageUri(context: Context, bitmap: Bitmap): Uri? {
+        return try {
+            val imagesDir = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val imageFile = File.createTempFile("Title", ".jpg", imagesDir)
+            val outputStream = FileOutputStream(imageFile)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+            outputStream.close()
+            Uri.fromFile(imageFile)
+        } catch (e: IOException) {
+            e.printStackTrace()
             null
-        )
-        return Uri.parse(path)
+        }
     }
+    private fun resizeBitmap(bitmap: Bitmap): Bitmap {
+        val maxWidth = 1024
+        val maxHeight = 1024
+
+        val width = bitmap.width
+        val height = bitmap.height
+
+
+        if (width <= maxWidth && height <= maxHeight) {
+            return bitmap
+        }
+
+        val ratio: Float = width.toFloat() / height.toFloat()
+
+        val finalWidth: Int
+        val finalHeight: Int
+        if (width > height) {
+            finalWidth = minOf(width, maxWidth)
+            finalHeight = (finalWidth / ratio).toInt()
+        } else {
+            finalHeight = minOf(height, maxHeight)
+            finalWidth = (finalHeight * ratio).toInt()
+        }
+
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, true)
+    }
+
+
 
     private fun navigateToAddNewPost(selectedImageUri: Uri) {
         val intent = Intent(context, AddNewPostActivity::class.java)
@@ -198,27 +247,38 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
             data?.let {
-
-                val photo: Bitmap = it.extras?.get("data") as Bitmap
-                val selectedImageUri = getImageUri(requireContext(), photo)
-                navigateToAddNewPost(selectedImageUri)
+                val photo: Bitmap? = it.extras?.get("data") as? Bitmap
+                photo?.let { bitmap ->
+                    val resizedBitmap = resizeBitmap(bitmap)
+                    val selectedImageUri = getImageUri(requireContext(), resizedBitmap)
+                    navigateToAddNewPost(selectedImageUri!!)
+                }
             }
-
         }
     }
+
 
 
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
             val data: Intent? = result.data
-            data?.let {
-
-                val selectedImageUri = it.data
-                navigateToAddNewPost(selectedImageUri!!)
+            data?.let { data: Intent ->
+                val selectedImageUri = data.data
+                selectedImageUri?.let { uri ->
+                    val inputStream = requireContext().contentResolver.openInputStream(uri) // Using requireContext() in a Fragment
+                    inputStream?.use { stream: InputStream ->
+                        val bitmap = BitmapFactory.decodeStream(stream)
+                        val resizedBitmap = resizeBitmap(bitmap)
+                        val resizedImageUri = getImageUri(requireContext(), resizedBitmap)
+                        navigateToAddNewPost(resizedImageUri!!)
+                    }
+                }
             }
-
         }
     }
+
+
+
     private fun fetchUserData(userId: String) {
         val userRef = firestore.collection("users").document(userId)
 

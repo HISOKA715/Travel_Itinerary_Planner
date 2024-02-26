@@ -1,19 +1,26 @@
 package com.example.travel_itinerary_planner.social
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
-import com.example.travel_itinerary_planner.databinding.FragmentSocialBinding
+import com.example.travel_itinerary_planner.databinding.FragmentOthersPostDetailsBinding
 import com.example.travel_itinerary_planner.databinding.ItemAllPostBinding
+import com.example.travel_itinerary_planner.databinding.ItemOthersPostDetailsBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.example.travel_itinerary_planner.profile.SocialMediaPost
-import com.example.travel_itinerary_planner.social.AllSocialPostAdapter
-import com.example.travel_itinerary_planner.social.UserData
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,19 +28,20 @@ import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Date
 
-class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener {
-
-    private var _binding: FragmentSocialBinding? = null
+class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOptionsClickListener, OthersPostAdapter.OnBookmarkClickListener  {
+    private var _binding: FragmentOthersPostDetailsBinding? = null
     private val binding get() = _binding!!
+
     private lateinit var firestore: FirebaseFirestore
     private lateinit var auth: FirebaseAuth
-    private lateinit var allSocialPostAdapter: AllSocialPostAdapter
+    private lateinit var othersPostAdapter: OthersPostAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        _binding = FragmentSocialBinding.inflate(inflater, container, false)
+    ): View {
+
+        _binding = FragmentOthersPostDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -43,14 +51,40 @@ class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener 
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
 
-        allSocialPostAdapter = AllSocialPostAdapter(this)
-        binding.recyclerViewAllPosts.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewAllPosts.adapter = allSocialPostAdapter
+        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
 
+
+        val menu = bottomNavigationView.menu
+        for (i in 0 until menu.size()) {
+            val menuItem = menu.getItem(i)
+            if (menuItem.itemId == R.id.navigation_social) {
+                menuItem.isChecked = true
+                break
+            }
+        }
+
+        binding.toolbarOthersPostDetails.setNavigationOnClickListener {
+            val userId = requireActivity().intent.getStringExtra("userId")
+
+            val intent = Intent(requireContext(), BottomNavigationActivity::class.java).apply {
+                putExtra("returnToOthersProfileFragment", true)
+                putExtra("userId", userId)
+            }
+            startActivity(intent)
+        }
+
+
+
+
+        othersPostAdapter = OthersPostAdapter(this,this)
+        binding.recyclerViewOthersPostDetails.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewOthersPostDetails.adapter = othersPostAdapter
         fetchSocialPosts()
-    }
 
-    override fun onBookmarkClick(socialMediaPost: SocialMediaPost, binding: ItemAllPostBinding) {
+
+
+    }
+    override fun onBookmarkClick(socialMediaPost: SocialMediaPost, binding: ItemOthersPostDetailsBinding) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
         val postId = socialMediaPost.SocialID
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
@@ -74,7 +108,7 @@ class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener 
                         bookmarksRef.document(bookmarkId)
                             .set(bookmarkData)
                             .addOnSuccessListener {
-                                binding.bookmarkIcon.setColorFilter(
+                                binding.bookmark.setColorFilter(
                                     ContextCompat.getColor(
                                         requireContext(),
                                         R.color.blue
@@ -89,7 +123,7 @@ class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener 
                     val bookmarkDocRef = querySnapshot.documents[0].reference
                     bookmarkDocRef.delete()
                         .addOnSuccessListener {
-                            binding.bookmarkIcon.setColorFilter(
+                            binding.bookmark.setColorFilter(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.dark_blue
@@ -127,29 +161,73 @@ class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener 
                 callback(newBookmarkId)
             }
     }
+    override fun onMoreOptionsClick(socialMediaPost: SocialMediaPost) {
 
-    private fun fetchSocialPosts() {
-        val postsRef = firestore.collection("SocialMedia")
+        showMoreOptionsDialog(socialMediaPost)
+    }
 
-        postsRef.whereEqualTo("SocialSharingOptions", "Public")
-            .get()
-            .addOnSuccessListener { documents ->
-                val socialPostsList = mutableListOf<SocialMediaPost>()
-                val userDataMap = mutableMapOf<String, UserData?>()
+    private fun showMoreOptionsDialog(socialMediaPost: SocialMediaPost) {
 
-                for (document in documents) {
-                    val socialPost = document.toObject(SocialMediaPost::class.java)
-                    socialPostsList.add(0, socialPost)
+        AlertDialog.Builder(requireContext())
+            .setTitle("More Options")
+            .setItems(arrayOf("Report")) { _, which ->
+                when (which) {
+                    0 -> {
 
-                    fetchUserData(socialPost.UserID) { userData ->
-                        userDataMap[socialPost.UserID] = userData
-                        allSocialPostAdapter.submitList(socialPostsList, userDataMap)
                     }
+
                 }
             }
-            .addOnFailureListener { exception ->
-            }
+            .show()
     }
+
+
+
+    override fun onResume() {
+        super.onResume()
+        fetchSocialPosts()
+    }
+
+    private fun fetchSocialPosts() {
+        val userId = requireActivity().intent.getStringExtra("userId")
+        val position = requireActivity().intent.getIntExtra("position", RecyclerView.NO_POSITION)
+
+
+        if (userId != null) {
+
+            val postsRef = firestore.collection("SocialMedia")
+                .whereEqualTo("UserID", userId)
+
+            postsRef.get()
+                .addOnSuccessListener { documents ->
+                    val socialPostsList = mutableListOf<SocialMediaPost>()
+                    val userDataMap = mutableMapOf<String, UserData?>()
+
+                    for (document in documents) {
+                        val socialPost = document.toObject(SocialMediaPost::class.java)
+                        socialPostsList.add(0, socialPost)
+
+                        fetchUserData(socialPost.UserID) { userData ->
+                            userDataMap[socialPost.UserID] = userData
+                            othersPostAdapter.submitList(socialPostsList, userDataMap)
+
+
+                                if (position != RecyclerView.NO_POSITION) {
+
+                                    binding.recyclerViewOthersPostDetails.post {
+                                        (binding.recyclerViewOthersPostDetails.layoutManager as LinearLayoutManager).scrollToPosition(position)
+                                    }
+                                }
+
+                        }
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(requireContext(), "Failed to fetch social posts: ${exception.message}", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
 
     private fun fetchUserData(userId: String, callback: (UserData?) -> Unit) {
         val userDocRef = firestore.collection("users").document(userId)
@@ -165,10 +243,5 @@ class SocialFragment : Fragment(), AllSocialPostAdapter.OnBookmarkClickListener 
             .addOnFailureListener { exception ->
                 callback(null)
             }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }

@@ -34,16 +34,25 @@
         tools:layout="@layout/fragment_profile" />
 
     <fragment
-        android:id="@+id/drawerFragment"
+        android:id="@+id/navigation_drawer"
         android:name="com.example.travel_itinerary_planner.DrawerFragment"
         android:label="Drawer"
         tools:layout="@layout/fragment_drawer" />
     <fragment
-        android:id="@+id/postDetailsFragment"
+        android:id="@+id/navigation_post_details"
         android:name="com.example.travel_itinerary_planner.social.PostDetailsFragment"
         android:label="PostDetails"
         tools:layout="@layout/fragment_post_details" />
-
+    <fragment
+        android:id="@+id/navigation_others_profile"
+        android:name="com.example.travel_itinerary_planner.social.OthersProfileFragment"
+        android:label="OthersProfile"
+        tools:layout="@layout/fragment_others_profile" />
+    <fragment
+        android:id="@+id/navigation_others_post_details"
+        android:name="com.example.travel_itinerary_planner.social.OthersPostDetailsFragment"
+        android:label="OthersPostDetails"
+        tools:layout="@layout/fragment_others_post_details"/>
 
 
 </navigation>

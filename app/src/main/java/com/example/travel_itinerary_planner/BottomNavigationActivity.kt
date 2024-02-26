@@ -23,31 +23,67 @@ class BottomNavigationActivity : LoggedInActivity(){
         val navigateToDrawerFragment = intent.getBooleanExtra("navigateToDrawerFragment", false)
         val returnToProfileFragment = intent.getBooleanExtra("returnToProfileFragment", false)
         val navigateToProfileFragment = intent.getBooleanExtra("navigateToProfileFragment", false)
+        val returnToSocialFragment = intent.getBooleanExtra("returnToSocialFragment", false)
+        val navigateToOthersPostDetailsFragment = intent.getBooleanExtra("navigateToOthersPostDetailsFragment", false)
+        val returnToOthersProfileFragment = intent.getBooleanExtra("returnToOthersProfileFragment", false)
+        val returnToPostDetailsFragment = intent.getBooleanExtra("returnToPostDetailsFragment", false)
+        val navigateToPostDetailsFragment = intent.getBooleanExtra("navigateToPostDetailsFragment", false)
         if (returnToDrawerFragment) {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_profile
             val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
-            navController.navigate(R.id.drawerFragment)
+            navController.navigate(R.id.navigation_drawer)
 
 
         } else if (navigateToDrawerFragment) {
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_profile
             val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
-            navController.navigate(R.id.drawerFragment)
-        } else if (returnToProfileFragment){
+            navController.navigate(R.id.navigation_drawer)
+        } else if (returnToProfileFragment) {
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_profile
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_profile)
 
-        } else if (navigateToProfileFragment){
+        } else if (navigateToProfileFragment) {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_profile
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_profile)
+
+        } else if (returnToSocialFragment) {
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_social
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_social)
 
 
+        } else if (returnToOthersProfileFragment) {
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_social
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_others_profile)
+        } else if (navigateToOthersPostDetailsFragment){
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_social
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_others_post_details)
+        } else if (returnToPostDetailsFragment){
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_profile
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_post_details)
         }
-
+        else if (navigateToPostDetailsFragment){
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_profile
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_post_details)
+        }
     }
-
 }

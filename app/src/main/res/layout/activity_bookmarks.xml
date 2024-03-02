@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".BookmarksActivity">
+    tools:context=".social.BookmarksActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -23,7 +23,7 @@
             app:titleMarginStart="90dp" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recycler_view_bookmarks"
+            android:id="@+id/recyclerViewBookmarks"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/toolbar"

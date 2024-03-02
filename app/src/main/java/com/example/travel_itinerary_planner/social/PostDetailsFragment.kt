@@ -73,7 +73,7 @@ class PostDetailsFragment : LoggedInFragment(), SocialPostAdapter.OnMoreOptionsC
         }
 
 
-        socialPostAdapter  = SocialPostAdapter(this, this)
+        socialPostAdapter  = SocialPostAdapter(this, this,childFragmentManager)
         binding.recyclerViewPosts.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewPosts.adapter = socialPostAdapter
 
@@ -95,16 +95,15 @@ class PostDetailsFragment : LoggedInFragment(), SocialPostAdapter.OnMoreOptionsC
 
             bookmarkQuery.get().addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    generateBookmarkId(bookmarksRef) { bookmarkId ->
+
                         val bookmarkData = hashMapOf(
-                            "BookmarkID" to bookmarkId,
                             "UserID" to currentUserUid,
                             "SocialID" to postId,
                             "BookmarkTime" to dateFormat.format(Date())
                         )
 
-                        bookmarksRef.document(bookmarkId)
-                            .set(bookmarkData)
+                        bookmarksRef
+                            .add(bookmarkData)
                             .addOnSuccessListener {
                                 binding.bookmarkImageView.setColorFilter(
                                     ContextCompat.getColor(
@@ -116,7 +115,7 @@ class PostDetailsFragment : LoggedInFragment(), SocialPostAdapter.OnMoreOptionsC
                             }.addOnFailureListener { exception ->
                                 Toast.makeText(context, "Failed to add bookmark", Toast.LENGTH_SHORT).show()
                             }
-                    }
+
                 } else {
                     val bookmarkDocRef = querySnapshot.documents[0].reference
                     bookmarkDocRef.delete()
@@ -138,27 +137,7 @@ class PostDetailsFragment : LoggedInFragment(), SocialPostAdapter.OnMoreOptionsC
         }
     }
 
-    private fun generateBookmarkId(bookmarksRef: CollectionReference, callback: (String) -> Unit) {
-        bookmarksRef
-            .orderBy("BookmarkID", Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val lastBookmarkId = if (!querySnapshot.isEmpty) {
-                    querySnapshot.documents[0].getString("BookmarkID")
-                } else {
-                    null
-                }
 
-                val newBookmarkId = if (lastBookmarkId != null) {
-                    val lastId = lastBookmarkId.substring(1).toInt()
-                    "B${String.format("%09d", lastId + 1)}"
-                } else {
-                    "B000000001"
-                }
-                callback(newBookmarkId)
-            }
-    }
 
 
 

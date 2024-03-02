@@ -25,6 +25,9 @@
         android:theme="@style/Theme.Travel_Itinerary_Planner"
         tools:targetApi="31">
         <activity
+            android:name=".social.BookmarkDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".social.EditPostActivity"
             android:exported="false" />
         <activity
@@ -55,13 +58,13 @@
             android:name=".PasswordSecurityActivity"
             android:exported="false" />
         <activity
-            android:name=".BookmarksActivity"
+            android:name=".social.BookmarksActivity"
             android:label="@string/title_activity_bookmarks"
             android:theme="@style/Theme.Travel_Itinerary_Planner" />
         <activity
             android:name=".BottomNavigationActivity"
             android:exported="true"
-            android:label="@string/title_activity_bottom_navigation"></activity>
+            android:label="@string/title_activity_bottom_navigation" />
         <activity
             android:name=".login_register_reset.ResetPasswordActivity"
             android:exported="false" />

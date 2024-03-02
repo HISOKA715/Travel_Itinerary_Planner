@@ -1,5 +1,6 @@
 package com.example.travel_itinerary_planner.social
 
+import SocialCommentBottomSheetFragment
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -9,6 +10,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -16,17 +18,17 @@ import com.bumptech.glide.Glide
 import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.ItemAllPostBinding
-import com.example.travel_itinerary_planner.databinding.ItemSocialMediaBinding
 import com.example.travel_itinerary_planner.profile.SocialMediaPost
 import com.example.travel_itinerary_planner.social.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class AllSocialPostAdapter(private val bookmarkListener: OnBookmarkClickListener) : RecyclerView.Adapter<AllSocialPostAdapter.AllSocialPostViewHolder>() {
+class AllSocialPostAdapter(private val listener: OnMoreOptionsClick,private val bookmarkListener: OnBookmarkClickListener, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<AllSocialPostAdapter.AllSocialPostViewHolder>() {
 
     private var socialPosts: List<SocialMediaPost> = ArrayList()
     private var userDataMap: Map<String, UserData?> = HashMap()
     private var isExpandedMap: MutableMap<Int, Boolean> = HashMap()
+
     private lateinit var firestore: FirebaseFirestore
     inner class AllSocialPostViewHolder(private val binding: ItemAllPostBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -35,8 +37,36 @@ class AllSocialPostAdapter(private val bookmarkListener: OnBookmarkClickListener
             firestore = FirebaseFirestore.getInstance()
             binding.postContent.text = socialPost.SocialContent
             binding.commentsCount.text = socialPost.SocialCommentCounts
+
             binding.postDate.text = socialPost.SocialDate
             binding.textViewLocation.text = socialPost.SocialLocation
+            binding.commentsIcon.setOnClickListener {
+                val postId = socialPost.SocialID
+                val bottomSheetFragment = SocialCommentBottomSheetFragment()
+                val bundle = Bundle().apply {
+                    putString("postId", postId)
+                }
+                bottomSheetFragment.arguments = bundle
+                bottomSheetFragment.show(fragmentManager, "SocialCommentBottomSheetFragment")
+            }
+            val userSocialRef = firestore.collection("UserSocial")
+            val query = userSocialRef.whereEqualTo("SocialID", socialPost.SocialID)
+
+            query.get().addOnSuccessListener { querySnapshot ->
+                val commentCount = querySnapshot.size().toString()
+                val socialMediaRef = firestore.collection("SocialMedia").document( socialPost.SocialID)
+
+                socialMediaRef.update("SocialCommentCounts", commentCount)
+                    .addOnSuccessListener {
+                        binding.commentsCount.text=  "$commentCount Comments"
+                    }
+                    .addOnFailureListener { e ->
+
+                    }
+            }.addOnFailureListener { e ->
+
+            }
+
 
             binding.userName.setOnClickListener { view ->
                 val position = adapterPosition
@@ -132,10 +162,20 @@ class AllSocialPostAdapter(private val bookmarkListener: OnBookmarkClickListener
                     bookmarkListener.onBookmarkClick(socialPosts[position], binding)
                 }
             }
+            binding.viewMore.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    listener.onMoreOptionsClick(socialPosts[position])
+                }
+            }
+
 
         }
     }
 
+    interface OnMoreOptionsClick {
+        fun onMoreOptionsClick(socialMediaPost: SocialMediaPost)
+    }
     interface OnBookmarkClickListener {
         fun onBookmarkClick(socialMediaPost: SocialMediaPost, binding: ItemAllPostBinding)
     }
@@ -159,6 +199,7 @@ class AllSocialPostAdapter(private val bookmarkListener: OnBookmarkClickListener
         this.userDataMap = userDataMap
         notifyDataSetChanged()
     }
+
     private fun expandTextView(textView: TextView) {
         textView.maxLines = Int.MAX_VALUE
         textView.ellipsize = null

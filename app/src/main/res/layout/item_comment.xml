@@ -64,7 +64,7 @@
             android:id="@+id/deleteCommentIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:tint="#FF0000"
+            app:tint="#FF0000"
             android:visibility="gone"
             app:srcCompat="@drawable/baseline_delete_24" />
     </LinearLayout>

@@ -1,11 +1,13 @@
 package com.example.travel_itinerary_planner.social
 
+import SocialCommentBottomSheetFragment
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentManager
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -16,7 +18,7 @@ import com.example.travel_itinerary_planner.profile.SocialMediaPost
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class OthersPostAdapter(private val listener: OnMoreOptionsClickListener,private val bookmarkListener: OnBookmarkClickListener) : RecyclerView.Adapter<OthersPostAdapter.OthersPostViewHolder>() {
+class OthersPostAdapter(private val listener: OnMoreOptionsClickListener,private val bookmarkListener: OnBookmarkClickListener, private val fragmentManager: FragmentManager) : RecyclerView.Adapter<OthersPostAdapter.OthersPostViewHolder>() {
 
     private var socialPosts: List<SocialMediaPost> = ArrayList()
     private var userDataMap: Map<String, UserData?> = HashMap()
@@ -29,7 +31,33 @@ class OthersPostAdapter(private val listener: OnMoreOptionsClickListener,private
         fun bind(socialPost: SocialMediaPost, userData: UserData?) {
             firestore = FirebaseFirestore.getInstance()
             binding.postContent.text = socialPost.SocialContent
-            binding.commentsCount.text = socialPost.SocialCommentCounts
+            binding.comments.setOnClickListener {
+                val postId = socialPost.SocialID
+                val bottomSheetFragment = SocialCommentBottomSheetFragment()
+                val bundle = Bundle().apply {
+                    putString("postId", postId)
+                }
+                bottomSheetFragment.arguments = bundle
+                bottomSheetFragment.show(fragmentManager, "SocialCommentBottomSheetFragment")
+            }
+            val userSocialRef = firestore.collection("UserSocial")
+            val query = userSocialRef.whereEqualTo("SocialID", socialPost.SocialID)
+
+            query.get().addOnSuccessListener { querySnapshot ->
+                val commentCount = querySnapshot.size().toString()
+                val socialMediaRef = firestore.collection("SocialMedia").document( socialPost.SocialID)
+
+                socialMediaRef.update("SocialCommentCounts", commentCount)
+                    .addOnSuccessListener {
+                        binding.commentsCount.text=  "$commentCount Comments"
+                    }
+                    .addOnFailureListener { e ->
+
+                    }
+            }.addOnFailureListener { e ->
+
+            }
+
             binding.postDate.text = socialPost.SocialDate
             binding.location.text=socialPost.SocialLocation
             binding.userNameView.setOnClickListener { view ->
@@ -114,6 +142,7 @@ class OthersPostAdapter(private val listener: OnMoreOptionsClickListener,private
                     bookmarkListener.onBookmarkClick(socialPosts[position], binding)
                 }
             }
+
         }
     }
 

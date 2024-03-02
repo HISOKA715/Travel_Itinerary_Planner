@@ -44,7 +44,7 @@
             app:srcCompat="@drawable/baseline_attach_file_24" />
 
         <EditText
-            android:id="@+id/messageEditText"
+            android:id="@+id/commentsEdit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"

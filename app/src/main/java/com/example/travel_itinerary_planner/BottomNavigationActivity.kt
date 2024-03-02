@@ -24,8 +24,10 @@ class BottomNavigationActivity : LoggedInActivity(){
         val returnToProfileFragment = intent.getBooleanExtra("returnToProfileFragment", false)
         val navigateToProfileFragment = intent.getBooleanExtra("navigateToProfileFragment", false)
         val returnToSocialFragment = intent.getBooleanExtra("returnToSocialFragment", false)
+        val navigateToSocialFragment = intent.getBooleanExtra("navigateToSocialFragment", false)
         val navigateToOthersPostDetailsFragment = intent.getBooleanExtra("navigateToOthersPostDetailsFragment", false)
         val returnToOthersProfileFragment = intent.getBooleanExtra("returnToOthersProfileFragment", false)
+        val navigateToOthersProfileFragment = intent.getBooleanExtra("navigateToOthersProfileFragment", false)
         val returnToPostDetailsFragment = intent.getBooleanExtra("returnToPostDetailsFragment", false)
         val navigateToPostDetailsFragment = intent.getBooleanExtra("navigateToPostDetailsFragment", false)
         if (returnToDrawerFragment) {
@@ -62,7 +64,21 @@ class BottomNavigationActivity : LoggedInActivity(){
             navController.navigate(R.id.navigation_social)
 
 
+        } else if (navigateToSocialFragment) {
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_social
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_social)
+
+
         } else if (returnToOthersProfileFragment) {
+
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_social
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_others_profile)
+        } else if (navigateToOthersProfileFragment) {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
             bottomNavigationView.selectedItemId = R.id.navigation_social

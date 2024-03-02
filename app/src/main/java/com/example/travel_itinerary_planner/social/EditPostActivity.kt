@@ -31,6 +31,7 @@ class EditPostActivity : LoggedInActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var addressListView: ListView
     private lateinit var adapter: ArrayAdapter<String>
+    private var socialMediaPost: SocialMediaPost? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityEditPostBinding.inflate(layoutInflater)
@@ -39,7 +40,8 @@ class EditPostActivity : LoggedInActivity() {
         firestore = FirebaseFirestore.getInstance()
 
         val postId = intent.getStringExtra("postId")
-
+        val cameFromBookmarkDetails = intent.getBooleanExtra("cameFromBookmarkDetails", false)
+        val cameFromSocialFragment = intent.getBooleanExtra("cameFromSocialFragment", false)
         if (postId != null) {
             firestore.collection("SocialMedia")
                 .document(postId)
@@ -47,7 +49,7 @@ class EditPostActivity : LoggedInActivity() {
                 .addOnSuccessListener { documentSnapshot ->
                     if (documentSnapshot.exists()) {
 
-                        val socialMediaPost = documentSnapshot.toObject(SocialMediaPost::class.java)
+                         socialMediaPost = documentSnapshot.toObject(SocialMediaPost::class.java)
 
                         socialMediaPost?.let { post ->
                             Glide.with(this)
@@ -88,10 +90,15 @@ class EditPostActivity : LoggedInActivity() {
                                     )
                                 )
                                     .addOnSuccessListener {
-                                        val intent = Intent(this, BottomNavigationActivity::class.java)
-                                        intent.putExtra("navigateToPostDetailsFragment", true)
-                                        startActivity(intent)
-                                        Toast.makeText(this, "Post updated successfully", Toast.LENGTH_SHORT).show()
+                                        if (cameFromBookmarkDetails) {
+                                            navigateToBookmarkDetails()
+
+                                        } else if (cameFromSocialFragment) {
+                                            navigateToSocialFragment()
+                                        }else {
+                                            navigateToPostDetails()
+                                        }
+
 
                                     }
                                     .addOnFailureListener { exception ->
@@ -118,7 +125,30 @@ class EditPostActivity : LoggedInActivity() {
         }
     }
 
+    private fun navigateToBookmarkDetails() {
+        socialMediaPost?.let { post ->
+            val intent = Intent(this, BookmarkDetailsActivity::class.java).apply {
+                putExtra("postId", post.SocialID)
+            }
+            startActivity(intent)
+            finish()
+        }
+    }
+    private fun navigateToSocialFragment() {
+        val intent = Intent(this, BottomNavigationActivity::class.java)
+        intent.putExtra("navigateToSocialFragment", true)
+        startActivity(intent)
+        Toast.makeText(this, "Post updated successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
 
+    private fun navigateToPostDetails() {
+        val intent = Intent(this, BottomNavigationActivity::class.java)
+        intent.putExtra("navigateToPostDetailsFragment", true)
+        startActivity(intent)
+        Toast.makeText(this, "Post updated successfully", Toast.LENGTH_SHORT).show()
+        finish()
+    }
 
 private fun showAddressSelectionDialog() {
     val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_address_select, null)

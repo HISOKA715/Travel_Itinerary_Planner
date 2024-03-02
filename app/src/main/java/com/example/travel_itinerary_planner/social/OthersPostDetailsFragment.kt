@@ -26,7 +26,9 @@ import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
+import java.util.Locale
 
 class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOptionsClickListener, OthersPostAdapter.OnBookmarkClickListener  {
     private var _binding: FragmentOthersPostDetailsBinding? = null
@@ -76,7 +78,7 @@ class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOp
 
 
 
-        othersPostAdapter = OthersPostAdapter(this,this)
+        othersPostAdapter = OthersPostAdapter(this,this,childFragmentManager)
         binding.recyclerViewOthersPostDetails.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewOthersPostDetails.adapter = othersPostAdapter
         fetchSocialPosts()
@@ -97,16 +99,15 @@ class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOp
 
             bookmarkQuery.get().addOnSuccessListener { querySnapshot ->
                 if (querySnapshot.isEmpty) {
-                    generateBookmarkId(bookmarksRef) { bookmarkId ->
+
                         val bookmarkData = hashMapOf(
-                            "BookmarkID" to bookmarkId,
                             "UserID" to currentUserUid,
                             "SocialID" to postId,
                             "BookmarkTime" to dateFormat.format(Date())
                         )
 
-                        bookmarksRef.document(bookmarkId)
-                            .set(bookmarkData)
+                        bookmarksRef
+                            .add(bookmarkData)
                             .addOnSuccessListener {
                                 binding.bookmark.setColorFilter(
                                     ContextCompat.getColor(
@@ -118,7 +119,7 @@ class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOp
                             }.addOnFailureListener { exception ->
                                 Toast.makeText(context, "Failed to add bookmark", Toast.LENGTH_SHORT).show()
                             }
-                    }
+
                 } else {
                     val bookmarkDocRef = querySnapshot.documents[0].reference
                     bookmarkDocRef.delete()
@@ -140,39 +141,19 @@ class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOp
         }
     }
 
-    private fun generateBookmarkId(bookmarksRef: CollectionReference, callback: (String) -> Unit) {
-        bookmarksRef
-            .orderBy("BookmarkID", Query.Direction.DESCENDING)
-            .limit(1)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val lastBookmarkId = if (!querySnapshot.isEmpty) {
-                    querySnapshot.documents[0].getString("BookmarkID")
-                } else {
-                    null
-                }
 
-                val newBookmarkId = if (lastBookmarkId != null) {
-                    val lastId = lastBookmarkId.substring(1).toInt()
-                    "B${String.format("%09d", lastId + 1)}"
-                } else {
-                    "B000000001"
-                }
-                callback(newBookmarkId)
-            }
-    }
     override fun onMoreOptionsClick(socialMediaPost: SocialMediaPost) {
 
-        showMoreOptionsDialog(socialMediaPost)
+        showMoreReportOptionsDialog(socialMediaPost)
     }
 
-    private fun showMoreOptionsDialog(socialMediaPost: SocialMediaPost) {
-
+    private fun showMoreReportOptionsDialog(socialMediaPost: SocialMediaPost) {
         AlertDialog.Builder(requireContext())
             .setTitle("More Options")
             .setItems(arrayOf("Report")) { _, which ->
                 when (which) {
                     0 -> {
+                        showReportOptionsDialog(socialMediaPost)
 
                     }
 
@@ -180,6 +161,59 @@ class OthersPostDetailsFragment : LoggedInFragment(), OthersPostAdapter.OnMoreOp
             }
             .show()
     }
+    private fun showReportOptionsDialog(socialMediaPost: SocialMediaPost) {
+        val reasons = arrayOf("Inappropriate content", "Spam", "Offensive language", "Other")
+        AlertDialog.Builder(requireContext())
+            .setTitle("Report Post")
+            .setSingleChoiceItems(reasons, -1) { dialog, which ->
+                val selectedReason = reasons[which]
+                showReportConfirmationDialog(selectedReason, socialMediaPost)
+                dialog.dismiss()
+            }
+            .setNegativeButton("Cancel") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showReportConfirmationDialog(reason: String, socialMediaPost: SocialMediaPost) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Confirm Report")
+            .setMessage("Are you sure you want to report this post for '$reason'?")
+            .setPositiveButton("Report") { _, _ ->
+                reportPost(socialMediaPost, reason)
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+
+    private fun reportPost(socialMediaPost: SocialMediaPost, reason: String) {
+        val currentUserID = FirebaseAuth.getInstance().currentUser?.uid
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+        val currentDateAndTime = Calendar.getInstance().time
+        val formattedDate = dateFormat.format(currentDateAndTime).toString()
+
+
+            val reportData = hashMapOf(
+                "SocialID" to socialMediaPost.SocialID,
+                "UserID" to currentUserID,
+                "ReportTime" to formattedDate,
+                "Reason" to reason
+            )
+
+            val reportsRef = firestore.collection("Reports")
+            reportsRef.add(reportData)
+                .addOnSuccessListener {
+                    Toast.makeText(context, "Post reported for '$reason'", Toast.LENGTH_SHORT).show()
+                }
+                .addOnFailureListener { exception ->
+                    Toast.makeText(context, "Failed to report post", Toast.LENGTH_SHORT).show()
+                }
+
+    }
+
+
 
 
 

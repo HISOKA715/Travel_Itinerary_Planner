@@ -23,13 +23,16 @@ class DrawerFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.nav_view)
-        val menu = bottomNavigationView.menu
-        for (i in 0 until menu.size()) {
-            val menuItem = menu.getItem(i)
-            if (menuItem.itemId == R.id.navigation_profile) {
-                menuItem.isChecked = true
-                break
+        val bottomNavigationView = view?.findViewById<BottomNavigationView>(R.id.nav_view)
+
+        val menu = bottomNavigationView?.menu
+        if (menu != null) {
+            for (i in 0 until menu.size()) {
+                val menuItem = menu.getItem(i)
+                if (menuItem.itemId == R.id.navigation_profile) {
+                    menuItem.isChecked = true
+                    break
+                }
             }
         }
         _binding = FragmentDrawerBinding.inflate(inflater, container, false)

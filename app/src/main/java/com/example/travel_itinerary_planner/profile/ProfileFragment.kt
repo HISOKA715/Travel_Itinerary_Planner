@@ -29,6 +29,7 @@ import com.example.travel_itinerary_planner.social.PostDetailsFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -43,6 +44,7 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
     private lateinit var socialMediaAdapter: SocialMediaAdapter
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: ProfileViewModel
+    private lateinit var storage: FirebaseStorage
 
     companion object {
         private const val REQUEST_IMAGE_PICK = 1001
@@ -65,6 +67,7 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
+        storage = FirebaseStorage.getInstance()
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
         viewModel = ViewModelProvider(this)[ProfileViewModel::class.java]
@@ -148,7 +151,6 @@ class ProfileFragment : LoggedInFragment(), SocialMediaAdapter.OnItemClickListen
                     if (documentSnapshot.exists()) {
                         val profilePictureUri = documentSnapshot.getString("ProfileImage")
                         profilePictureUri?.let { uri ->
-
                             Glide.with(this)
                                 .load(uri)
                                 .override(300, 300)

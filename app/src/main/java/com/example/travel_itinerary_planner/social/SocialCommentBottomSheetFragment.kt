@@ -29,6 +29,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -236,37 +237,57 @@ class SocialCommentBottomSheetFragment : BottomSheetDialogFragment(){
     }
 
     private fun saveCommentWithImageToFirestore(comment: String, imageUri: Uri) {
-        val imageUrl = imageUri.toString()
+        val currentUserUid = auth.currentUser?.uid
         val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
         val currentDateAndTime = Calendar.getInstance().time
         val formattedDate = dateFormat.format(currentDateAndTime).toString()
-        val currentUserUid = auth.currentUser?.uid
         postId = arguments?.getString("postId")
-        val commentData = hashMapOf(
-            "SocialID" to postId,
-            "UserID" to currentUserUid,
-            "UserComment" to comment,
-            "CommentImage" to imageUrl,
-            "CreateDate" to formattedDate
-        )
 
-        val commentsRef = firestore.collection("UserSocial")
-        commentsRef.add(commentData)
-            .addOnSuccessListener {
-                Toast.makeText(requireContext(), "Comment with image added successfully", Toast.LENGTH_SHORT).show()
 
-                postId?.let { updateSocialMediaCommentCounts(it)
-                    updateCommentCounts(it)
-                    fetchComments(it)
-                    selectedImageUri = null
-                    binding.attachedImage.visibility = View.GONE
-                    binding.crossIcon.visibility = View.GONE
-                    binding.commentsEdit.setText("")}
+        val imageName = UUID.randomUUID().toString()
+
+
+        val storageRef = FirebaseStorage.getInstance().reference.child("UserSocial/$currentUserUid/$imageName.jpg")
+
+
+        storageRef.putFile(imageUri)
+            .addOnSuccessListener { taskSnapshot ->
+
+                storageRef.downloadUrl.addOnSuccessListener { uri ->
+
+                    val commentData = hashMapOf(
+                        "SocialID" to postId,
+                        "UserID" to currentUserUid,
+                        "UserComment" to comment,
+                        "CommentImage" to uri.toString(),
+                        "CreateDate" to formattedDate
+                    )
+
+                    val commentsRef = firestore.collection("UserSocial")
+                    commentsRef.add(commentData)
+                        .addOnSuccessListener {
+                            Toast.makeText(requireContext(), "Comment with image added successfully", Toast.LENGTH_SHORT).show()
+
+                            postId?.let {
+                                updateSocialMediaCommentCounts(it)
+                                updateCommentCounts(it)
+                                fetchComments(it)
+                                selectedImageUri = null
+                                binding.attachedImage.visibility = View.GONE
+                                binding.crossIcon.visibility = View.GONE
+                                binding.commentsEdit.setText("")
+                            }
+                        }
+                        .addOnFailureListener { e ->
+                            Toast.makeText(requireContext(), "Failed to add comment with image: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                }
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Failed to add comment with image: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Failed to upload image: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
+
 
     private fun selectImageFromGalleryOrCamera() {
         val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery", "Cancel")

@@ -21,6 +21,7 @@ import com.example.travel_itinerary_planner.databinding.ActivityEditProfileBindi
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -220,18 +221,30 @@ class EditProfileActivity : LoggedInActivity() {
             val firestore = FirebaseFirestore.getInstance()
             val userRef = firestore.collection("users").document(currentUser.uid)
 
-            val profilePictureUri = selectedImageUri.toString()
 
-            userRef.update("ProfileImage", profilePictureUri)
-                .addOnSuccessListener {
-                    binding.imageProfile.setImageURI(selectedImageUri)
-                    Toast.makeText(this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show()
+            val storageRef = FirebaseStorage.getInstance().reference.child("Profile/${currentUser.uid}.jpg")
+            storageRef.putFile(selectedImageUri)
+                .addOnSuccessListener { taskSnapshot ->
+
+                    storageRef.downloadUrl.addOnSuccessListener { imageUrl ->
+
+                        userRef.update("ProfileImage", imageUrl.toString())
+                            .addOnSuccessListener {
+
+                                binding.imageProfile.setImageURI(selectedImageUri)
+                                Toast.makeText(this, "Profile picture updated successfully", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT).show()
+                            }
+                    }
                 }
                 .addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed to update profile picture", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Failed to upload profile picture", Toast.LENGTH_SHORT).show()
                 }
         }
     }
+
 
 
 

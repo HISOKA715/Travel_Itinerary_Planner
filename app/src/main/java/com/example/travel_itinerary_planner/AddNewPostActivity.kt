@@ -29,6 +29,9 @@ import java.util.Date
 import java.util.Locale
 import java.io.InputStreamReader
 import androidx.core.content.ContextCompat
+import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
+import java.util.UUID
 
 class AddNewPostActivity : LoggedInActivity() {
     private lateinit var binding: ActivityAddNewPostBinding
@@ -36,7 +39,7 @@ class AddNewPostActivity : LoggedInActivity() {
     private lateinit var selectedImageUri: Uri
     private lateinit var addressListView: ListView
     private lateinit var adapter: ArrayAdapter<String>
-
+    private lateinit var storage: FirebaseStorage
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +47,7 @@ class AddNewPostActivity : LoggedInActivity() {
         binding = ActivityAddNewPostBinding.inflate(layoutInflater)
         setContentView(binding.root)
         firestore = FirebaseFirestore.getInstance()
+        storage = FirebaseStorage.getInstance()
         binding.multilineDescribe.requestFocus()
         binding.toolbarAddNewPost.setNavigationOnClickListener {
             showConfirmationDialog()
@@ -185,53 +189,72 @@ class AddNewPostActivity : LoggedInActivity() {
 
 
     private fun addPostToFirestore() {
-
         val description = binding.multilineDescribe.text.toString().trim()
         val location = binding.locationEditText.text.toString().trim()
         val sharingOptions = binding.sharingOptionsEditText.text.toString().trim()
 
+        generateSocialId { socialId ->
+            val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+            val currentDate = dateFormat.format(Date())
+            val user = FirebaseAuth.getInstance().currentUser
+            val uid = user?.uid
 
 
+            val filename = UUID.randomUUID().toString()
+
+            val imageRef = storage.reference.child("SocialMedia").child(uid!!).child("$filename.jpg")
+            imageRef.putFile(selectedImageUri)
+                .addOnSuccessListener { taskSnapshot ->
+                    imageRef.downloadUrl.addOnSuccessListener { uri ->
+                        val post = hashMapOf(
+                            "SocialID" to socialId,
+                            "UserID" to uid,
+                            "SocialImage" to uri.toString(),
+                            "SocialContent" to description,
+                            "SocialDate" to currentDate,
+                            "SocialLocation" to location,
+                            "SocialSharingOptions" to sharingOptions,
+                            "SocialCommentCounts" to null
+                        )
+
+                        firestore.collection("SocialMedia").document(socialId)
+                            .set(post)
+                            .addOnSuccessListener {
+                                val intent = Intent(this, BottomNavigationActivity::class.java)
+                                intent.putExtra("navigateToProfileFragment", true)
+                                startActivity(intent)
+                                Toast.makeText(this, "Post added successfully", Toast.LENGTH_SHORT).show()
+                                finish()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(this, "Failed to add post", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }
+                .addOnFailureListener {
+                    Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    private fun generateSocialId(callback: (String) -> Unit) {
         firestore.collection("SocialMedia")
+            .orderBy("SocialID", Query.Direction.DESCENDING)
+            .limit(1)
             .get()
             .addOnSuccessListener { querySnapshot ->
-                val socialId = String.format("S%09d", querySnapshot.size() + 1)
-
-
-
-                val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-                val currentDate = dateFormat.format(Date())
-                val user = FirebaseAuth.getInstance().currentUser
-                val uid = user?.uid
-                val post = hashMapOf(
-                    "SocialID" to socialId,
-                    "UserID" to uid,
-                    "SocialImage" to selectedImageUri,
-                    "SocialContent" to description,
-                    "SocialDate" to currentDate,
-                    "SocialLocation" to location,
-                    "SocialSharingOptions" to sharingOptions,
-                    "SocialCommentCounts" to null
-                )
-
-                firestore.collection("SocialMedia").document(socialId)
-                    .set(post)
-                    .addOnSuccessListener { documentReference ->
-
-                        val intent = Intent(this, BottomNavigationActivity::class.java)
-                        intent.putExtra("navigateToProfileFragment", true)
-                        startActivity(intent)
-                        Toast.makeText(this,"Post added successfully", Toast.LENGTH_SHORT).show()
-                        finish()
-                    }
-                    .addOnFailureListener { e ->
-
-                        Toast.makeText(this,"Failed to add post", Toast.LENGTH_SHORT).show()
-                    }
+                val newSocialId = if (!querySnapshot.isEmpty) {
+                    val latestSocialId = querySnapshot.documents[0].getString("SocialID")
+                    val latestSocialNumber = latestSocialId?.substring(1)?.toInt() ?: 0
+                    val newSocialNumber = latestSocialNumber + 1
+                    "S${String.format("%09d", newSocialNumber)}"
+                } else {
+                    "S000000001"
+                }
+                callback(newSocialId)
             }
-            .addOnFailureListener { e ->
+            .addOnFailureListener { exception ->
 
-                Toast.makeText(this,"Failed to get number of posts", Toast.LENGTH_SHORT).show()
             }
     }
 

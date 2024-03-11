@@ -1,13 +1,14 @@
 {
   "project_info": {
-    "project_number": "905019977846",
-    "project_id": "travelitineraryplanner-ecf5a",
-    "storage_bucket": "travelitineraryplanner-ecf5a.appspot.com"
+    "project_number": "223518970706",
+    "firebase_url": "https://fir-project-7ba4f-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "fir-project-7ba4f",
+    "storage_bucket": "fir-project-7ba4f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:905019977846:android:a146cf79e8d4adcc8daf57",
+        "mobilesdk_app_id": "1:223518970706:android:5e6695a63d9519d438208b",
         "android_client_info": {
           "package_name": "com.example.travel_itinerary_planner"
         }
@@ -15,7 +16,26 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB6YhkrKmHMRJ8OCv4MTVDrOjN0NNVsgBM"
+          "current_key": "AIzaSyDtnS0r7CFOE3KAK8Sz07ddFeNumRgP1tw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223518970706:android:4ba31a3f90a1aae838208b",
+        "android_client_info": {
+          "package_name": "com.tarc.finalProject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDtnS0r7CFOE3KAK8Sz07ddFeNumRgP1tw"
         }
       ],
       "services": {

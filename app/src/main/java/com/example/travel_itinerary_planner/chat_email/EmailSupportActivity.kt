@@ -73,32 +73,63 @@ class EmailSupportActivity : LoggedInActivity() {
             binding.imageButton.error = "Please select an image"
             return
         }
-        val recipientEmail = "littlean251@gmail.com"
-        val subject = "Support Request"
-        val body = getEmailBody()
+        val recipientEmails = mutableListOf<String>()
 
+        getUsersEmailsByCategory("Customer Support Admin") { emails ->
+            recipientEmails.addAll(emails)
+            getUsersEmailsByCategory("Owner") { emails ->
+                recipientEmails.addAll(emails)
+                getUsersEmailsByCategory("Admin") { emails ->
+                    recipientEmails.addAll(emails)
 
+                    if (recipientEmails.isNotEmpty()) {
+                        val subject = "Support Request"
+                        val body = getEmailBody()
 
-        val emailIntent = Intent(Intent.ACTION_SEND)
-        emailIntent.type = "message/rfc822"
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, arrayOf(recipientEmail))
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
-        emailIntent.putExtra(Intent.EXTRA_TEXT, body)
-        emailIntent.setPackage("com.google.android.gm")
+                        val emailIntent = Intent(Intent.ACTION_SEND)
+                        emailIntent.type = "message/rfc822"
+                        emailIntent.putExtra(Intent.EXTRA_EMAIL, recipientEmails.toTypedArray())
+                        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject)
+                        emailIntent.putExtra(Intent.EXTRA_TEXT, body)
+                        emailIntent.setPackage("com.google.android.gm")
 
-        selectedBitmap?.let { bitmap ->
-            val uri = getImageUri(this, bitmap)
-            emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
-            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-        }
+                        selectedBitmap?.let { bitmap ->
+                            val uri = getImageUri(this, bitmap)
+                            emailIntent.putExtra(Intent.EXTRA_STREAM, uri)
+                            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
 
+                        try {
+                            startActivity(Intent.createChooser(emailIntent, "Send email"))
+                        } catch (ex: ActivityNotFoundException) {
 
+                        }
+                    } else {
 
-        try {
-            startActivity(Intent.createChooser(emailIntent, "Send email"))
-        } catch (ex: ActivityNotFoundException) {
+                    }
+                }
+            }
         }
     }
+    private fun getUsersEmailsByCategory(category: String, onComplete: (List<String>) -> Unit) {
+        firestore.collection("users")
+            .whereEqualTo("UserCategory", category)
+            .get()
+            .addOnSuccessListener { documents ->
+                val emails = mutableListOf<String>()
+                for (document in documents) {
+                    val email = document.getString("Email")
+                    if (!email.isNullOrEmpty()) {
+                        emails.add(email)
+                    }
+                }
+                onComplete(emails)
+            }
+            .addOnFailureListener { exception ->
+
+            }
+    }
+
 
     private fun getEmailBody(): String {
         val issueDescription = binding.editTexMultiLine.text.toString()

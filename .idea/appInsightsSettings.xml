@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.travel_itinerary_planner" />
-                  <option name="mobileSdkAppId" value="1:905019977846:android:a146cf79e8d4adcc8daf57" />
-                  <option name="projectId" value="travelitineraryplanner-ecf5a" />
-                  <option name="projectNumber" value="905019977846" />
+                  <option name="mobileSdkAppId" value="1:223518970706:android:5e6695a63d9519d438208b" />
+                  <option name="projectId" value="fir-project-7ba4f" />
+                  <option name="projectNumber" value="223518970706" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

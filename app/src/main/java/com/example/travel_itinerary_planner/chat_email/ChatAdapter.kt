@@ -47,9 +47,9 @@ class ChatAdapter(private val context: Context, var messages: MutableList<Messag
         val message = messages[position]
         val currentUserID = FirebaseAuth.getInstance().currentUser?.uid
 
-        return if (message.UserID == currentUserID) {
+        return if (message.UserID == currentUserID && message.MessageChannel == "Customer Service") {
             SENT_MESSAGE_TYPE
-        } else if (message.RecipientID == currentUserID) {
+        } else if (message.RecipientID == currentUserID && message.MessageChannel == "Respond Service") {
             RECEIVED_MESSAGE_TYPE
         } else {
             DEFAULT_MESSAGE_TYPE
@@ -68,17 +68,19 @@ class ChatAdapter(private val context: Context, var messages: MutableList<Messag
             messageDateTextView.text = message.MessageDate
 
             if (message.MessageImage != null) {
+                if (itemViewType == SENT_MESSAGE_TYPE || itemViewType == RECEIVED_MESSAGE_TYPE) {
+                    imageMessageImageView.visibility = View.VISIBLE
+                } else {
+                    imageMessageImageView.visibility = View.GONE
+                }
 
-                imageMessageImageView.visibility = View.VISIBLE
                 Glide.with(itemView.context)
                     .load(message.MessageImage)
                     .error(R.drawable.travel_main)
                     .override(300, 300)
                     .centerCrop()
                     .into(imageMessageImageView)
-
             } else {
-
                 imageMessageImageView.visibility = View.GONE
             }
         }

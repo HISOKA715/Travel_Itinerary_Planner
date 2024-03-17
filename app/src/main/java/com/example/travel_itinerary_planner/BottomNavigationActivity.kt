@@ -30,6 +30,8 @@ class BottomNavigationActivity : LoggedInActivity(){
         val navigateToOthersProfileFragment = intent.getBooleanExtra("navigateToOthersProfileFragment", false)
         val returnToPostDetailsFragment = intent.getBooleanExtra("returnToPostDetailsFragment", false)
         val navigateToPostDetailsFragment = intent.getBooleanExtra("navigateToPostDetailsFragment", false)
+        val navigateToSmartBudgetFragment = intent.getBooleanExtra("navigateToSmartBudgetFragment", false)
+
         if (returnToDrawerFragment) {
 
             val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
@@ -100,6 +102,12 @@ class BottomNavigationActivity : LoggedInActivity(){
             bottomNavigationView.selectedItemId = R.id.navigation_profile
             val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
             navController.navigate(R.id.navigation_post_details)
+        }
+        else if (navigateToSmartBudgetFragment){
+            val bottomNavigationView = findViewById<BottomNavigationView>(R.id.nav_view)
+            bottomNavigationView.selectedItemId = R.id.navigation_home
+            val navController = findNavController(R.id.nav_host_fragment_activity_bottom_navigation)
+            navController.navigate(R.id.navigation_smart_budget)
         }
     }
 }

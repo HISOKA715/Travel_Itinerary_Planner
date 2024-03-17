@@ -53,6 +53,11 @@
         android:name="com.example.travel_itinerary_planner.social.OthersPostDetailsFragment"
         android:label="OthersPostDetails"
         tools:layout="@layout/fragment_others_post_details"/>
+    <fragment
+        android:id="@+id/navigation_smart_budget"
+        android:name="com.example.travel_itinerary_planner.smart_budget.SmartBudgetFragment"
+        android:label="SmartBudget"
+        tools:layout="@layout/fragment_smart_budget" />
 
 
 </navigation>

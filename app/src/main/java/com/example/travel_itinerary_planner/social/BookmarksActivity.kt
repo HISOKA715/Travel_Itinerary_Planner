@@ -51,19 +51,21 @@ class BookmarksActivity : LoggedInActivity(), BookmarksAdapter.OnItemClickListen
                     val bookmarkList = mutableListOf<SocialMediaPost>()
                     for (document in querySnapshot.documents) {
                         val post = document.toObject(SocialMediaPost::class.java)
-                        post?.let { bookmarkList.add(it) }
+                        if (post != null) {
+                            bookmarkList.add(post)
+                        } else {
+                        }
                     }
                     bookmarksAdapter.submitList(bookmarkList)
-
                 }
                 .addOnFailureListener { exception ->
                     Toast.makeText(this, "Failed to fetch bookmarks: ${exception.message}", Toast.LENGTH_SHORT).show()
-
                 }
         } ?: run {
             Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
         }
     }
+
 
     override fun onItemClick(socialMediaPost: SocialMediaPost) {
 

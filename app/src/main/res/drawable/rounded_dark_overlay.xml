@@ -1,0 +1,20 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- This is the rounded rectangle that will act as the clipping mask for the image -->
+    <item>
+        <shape android:shape="rectangle">
+
+            <solid android:color="@android:color/white"/>
+            <padding android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp"/>
+        </shape>
+    </item>
+
+    <!-- Your image goes here, it will be clipped by the shape defined above -->
+    <item android:drawable="@drawable/flag_of_malaysia"/>
+
+    <!-- The dark overlay -->
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#80000000"/>
+        </shape>
+    </item>
+</layer-list>

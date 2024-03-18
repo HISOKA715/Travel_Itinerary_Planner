@@ -82,6 +82,7 @@
         <activity
             android:name=".login_register_reset.RegisterActivity"
             android:exported="false" />
+
         <activity
             android:name=".login_register_reset.LoginActivity"
             android:exported="false" />

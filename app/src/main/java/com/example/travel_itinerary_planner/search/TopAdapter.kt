@@ -39,8 +39,6 @@ class TopAdapter (context: Context, private val dataSource: List<LocationData>) 
         holder.locationName.text = locationData?.name
         holder.distance.text = locationData?.distance
 
-
-
         return view
     }
 

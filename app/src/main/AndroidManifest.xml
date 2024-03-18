@@ -48,6 +48,9 @@
             android:name=".logged_in.LoggedInActivity"
             android:exported="false" />
         <activity
+            android:name=".tourism_attraction.TourismActivity"
+            android:exported="false" />
+        <activity
             android:name=".AddNewPostActivity"
             android:exported="false" />
         <activity

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -50,15 +51,15 @@
             android:rating="3.7"
             android:stepSize="0.1"
             android:theme="@style/RatingBar" />
-    <TextView
-        android:id="@+id/dateTextView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="10/03/2024"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:layout_marginStart="10dp"/>
+        <TextView
+            android:id="@+id/dateTextView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="10/03/2024"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginStart="10dp"/>
     </LinearLayout>
     <TextView
         android:id="@+id/commentTextView"
@@ -70,11 +71,20 @@
         android:textColor="@color/black"
         android:textSize="18dp"/>
 
-    <View
+
+
+    <ImageView
+        android:layout_marginTop="20dp"
+        android:id="@+id/imageView3"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_marginTop="10dp"
-        android:background="@android:color/black" />
+        android:layout_height="328dp"
+        app:srcCompat="?android:attr/galleryItemBackground"
+        android:scaleType="centerCrop"
+        android:visibility="gone"
+        />
+
+
+
 
 
 </LinearLayout>

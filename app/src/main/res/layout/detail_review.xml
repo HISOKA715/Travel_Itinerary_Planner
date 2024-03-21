@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".ReviewDetailActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="62dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageButton
+                android:id="@+id/imageButton8"
+                android:layout_width="44dp"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                app:srcCompat="@drawable/baseline_arrow_back_24" />
+
+            <ImageView
+                android:id="@+id/imageButton11"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                style="@style/RoundedImageView"
+                android:src="@drawable/lake_symphony"
+                android:scaleType="centerCrop"
+                />
+
+            <LinearLayout
+                android:layout_width="182dp"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginStart="10dp">
+
+                <TextView
+                    android:id="@+id/textView24"
+                    android:layout_width="match_parent"
+                    android:layout_height="34dp"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Sunway Velocity Shopping Mall"
+                    android:textColor="@color/black"
+                    android:textSize="22dp"
+                    android:textStyle="bold"
+                    android:gravity="center_vertical"/>
+
+                <TextView
+                    android:id="@+id/textView25"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Kuala Lumpur"
+                    android:textColor="@color/black"
+                    android:textSize="15dp"
+                    android:textStyle="bold"
+                    android:gravity="top"/>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/textView26"
+                android:layout_width="73dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:text="3.7"
+                android:textColor="@color/black"
+                android:textSize="40dp"
+                android:textStyle="bold"
+                android:gravity="center_vertical"/>
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="63dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/ic_star_yellow_24dp" />
+
+
+        </LinearLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="10dp"
+            android:background="#b9bcbe" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:text="More Review"
+            android:textColor="@color/black"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#b9bcbe" />
+
+            <ListView
+                android:id="@+id/item_review_detail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                 android:layout_weight="1"/>
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Add a review"
+            app:cornerRadius="5dp"
+            app:backgroundTint="@color/blue"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        android:gravity="center" />
+
+    </LinearLayout>
+</FrameLayout>

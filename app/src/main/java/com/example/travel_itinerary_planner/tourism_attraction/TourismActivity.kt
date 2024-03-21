@@ -1,6 +1,8 @@
 package com.example.travel_itinerary_planner.tourism_attraction
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.travel_itinerary_planner.R
@@ -16,6 +18,11 @@ class TourismActivity : LoggedInActivity() {
         super.onCreate(savedInstanceState)
         binding = TourismAttractionBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val imageButton: ImageButton = binding.imageButton2
+        imageButton.setOnClickListener {
+            val intent = Intent(this, ReviewDetailActivity::class.java)
+            startActivity(intent)
+        }
         reviewsList.add(Review("Tan chun keat", R.drawable.lake_symphony, 3.7f, "10/03/2024", "very badlol"))
         reviewsAdapter = ReviewAdapter(this, reviewsList)
         binding.listReview.adapter = reviewsAdapter
@@ -27,6 +34,8 @@ class TourismActivity : LoggedInActivity() {
                 binding.viewmore.visibility = View.GONE
             }
         }
+
+
         var isExpanded = false
         binding.viewmore.setOnClickListener {
             toggleTextExpansion()
@@ -38,6 +47,7 @@ class TourismActivity : LoggedInActivity() {
                 finish()
             }
         }
+
         setUtilitiesSelected()
         binding.textView16.setOnClickListener {
             setUtilitiesSelected()

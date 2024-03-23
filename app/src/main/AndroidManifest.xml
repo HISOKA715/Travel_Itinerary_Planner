@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -25,6 +27,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Travel_Itinerary_Planner"
         tools:targetApi="31">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/duskYellow" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.fileprovider"
@@ -44,6 +54,13 @@
         <activity
             android:name=".chat_email.ChatActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".notification.NotificationDetailActivity"
+            android:exported="true" />
+
+
+
         <activity
             android:name=".logged_in.LoggedInActivity"
             android:exported="false" />
@@ -59,6 +76,12 @@
         <activity
             android:name=".travel.TravelPlanActivity"
             android:exported="false"/>
+        <activity
+            android:name=".notification.Notification_View"
+            android:exported="false" />
+        <activity
+            android:name=".tourism_attraction.UserPreferActivity"
+            android:exported="false" />
         <activity
             android:name=".AddNewPostActivity"
             android:exported="false" />
@@ -98,24 +121,38 @@
             android:name=".login_register_reset.RegisterActivity"
             android:exported="false" />
 
+        <activity
+            android:name=".travel.LocationAddActivity"
+            android:exported="false" />
+        <activity
+            android:name=".feedback.FeedbackFormActivity"
+            android:exported="false" />
 
 
         <activity
             android:name=".login_register_reset.LoginActivity"
             android:exported="false" />
+
         <activity
+
             android:name=".MainActivity"
+            android:launchMode="singleTop"
             android:exported="true">
-
-
             <intent-filter>
-
-
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".MyFirebaseMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT"/>
+            </intent-filter>
+        </service>
+
     </application>
+
 
 </manifest>

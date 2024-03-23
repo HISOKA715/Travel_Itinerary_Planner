@@ -1,12 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
+        tools:context=".UserPreferActivity"
+        >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="58dp"
@@ -70,7 +75,7 @@
                 android:id="@+id/Shopping"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="98.72%"
+                android:text="0.00%"
                 android:textSize="20dp"
                 android:textStyle="bold" />
         </LinearLayout>
@@ -79,7 +84,9 @@
             android:id="@+id/seekBarShopping"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:progress="99"
+            android:progress="1"
+            android:min="1"
+            android:max="1000"
             android:progressDrawable="@drawable/custom_seekbar_track"
             android:thumb="@drawable/custom_thumb" />
 
@@ -109,7 +116,7 @@
                 android:id="@+id/Restaurant"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="0.10%"
+                android:text="0.00%"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -120,6 +127,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:progress="1"
+            android:min="1"
+            android:max="1000"
             android:progressDrawable="@drawable/custom_seekbar_track"
             android:thumb="@drawable/custom_thumb" />
 
@@ -150,7 +159,7 @@
                 android:id="@+id/Other"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="0.10%"
+                android:text="0.00%"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -162,6 +171,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:progress="1"
+            android:min="1"
+            android:max="1000"
             android:progressDrawable="@drawable/custom_seekbar_track"
             android:thumb="@drawable/custom_thumb"
 
@@ -194,7 +205,7 @@
                 android:id="@+id/Attraction"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:text="1.09%"
+                android:text="0.00%"
                 android:textSize="20dp"
                 android:textStyle="bold" />
 
@@ -205,6 +216,8 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:progress="1"
+            android:min="1"
+            android:max="1000"
             android:progressDrawable="@drawable/custom_seekbar_track"
             android:thumb="@drawable/custom_thumb" />
 
@@ -224,7 +237,5 @@
         android:textColor="@color/white"
         android:padding="12dp"
         android:gravity="center" />
-
-
-
-</LinearLayout>
+    </LinearLayout>
+</layout>

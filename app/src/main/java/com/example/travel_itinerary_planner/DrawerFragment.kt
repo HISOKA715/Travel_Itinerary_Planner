@@ -9,7 +9,9 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.travel_itinerary_planner.databinding.FragmentDrawerBinding
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
+import com.example.travel_itinerary_planner.notification.NotificationActivity
 import com.example.travel_itinerary_planner.social.BookmarksActivity
+import com.example.travel_itinerary_planner.tourism_attraction.UserPreferActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 
@@ -51,12 +53,21 @@ class DrawerFragment : Fragment() {
             startActivity(intent)
         }
 
+        binding.navigationNotificationHistory.setOnClickListener{
+            val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
+        }
+
         binding.navigationBookmarks.setOnClickListener {
             val intent = Intent(requireContext(), BookmarksActivity::class.java)
             startActivity(intent)
         }
         binding.navigationNotifications.setOnClickListener {
             val intent = Intent(requireContext(), NotificationsActivity::class.java)
+            startActivity(intent)
+        }
+        binding.navigationUserpre.setOnClickListener{
+            val intent = Intent(requireContext(), UserPreferActivity::class.java)
             startActivity(intent)
         }
         binding.navigationHelpCenter.setOnClickListener {

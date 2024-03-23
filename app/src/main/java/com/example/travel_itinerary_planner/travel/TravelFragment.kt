@@ -1,5 +1,6 @@
 package com.example.travel_itinerary_planner.travel
 
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -35,6 +36,12 @@ class TravelFragment : LoggedInFragment() {
 
         val adapter = TravelListAdapter(requireContext(), sortedDataWithHeaders)
         binding.myTravelPlan.adapter = adapter
+
+        binding.myTravelPlan.setOnItemClickListener { _, _, _, _ ->
+
+            val intent = Intent(context, TravelPlanActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun organizeDataByYear(travelPlans: List<TravelData>): List<TravelItem> {

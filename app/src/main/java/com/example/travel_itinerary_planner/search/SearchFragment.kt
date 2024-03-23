@@ -2,6 +2,7 @@ package com.example.travel_itinerary_planner.search
 
 import DataModel
 import MyGridAdapter
+import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
 import android.util.Log
@@ -9,6 +10,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import android.widget.GridView
 import android.widget.ImageButton
 import android.widget.ListView
@@ -16,6 +18,7 @@ import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 import com.example.travel_itinerary_planner.databinding.FragmentSearchBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
+import com.example.travel_itinerary_planner.tourism_attraction.TourismActivity
 
 class SearchFragment : LoggedInFragment() {
     private lateinit var viewModel: SearchViewModel
@@ -48,6 +51,10 @@ class SearchFragment : LoggedInFragment() {
         setupGridView(collapsedItems, binding.myGridView)
         setupGridView(collapsedItems, binding.myGridView2)
 
+        binding.myGridView2.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val intent = Intent(context, TourismActivity::class.java)
+            startActivity(intent)
+        }
 
         val data = listOf(
             LocationData("Suria KLCC", "3.0 W"),
@@ -89,10 +96,7 @@ class SearchFragment : LoggedInFragment() {
         gridView.adapter = adapter
     }
 
-//    private fun setupListView(items: List<LocationData>, listView: ListView){
-//        val adapter1 = TopAdapter(requireContext(), R.layout.top_attraction, items)
-//        listView.adapter = adapter1
-//    }
+
 
     private fun adjustGridViewHeight(gridView: GridView, isExpanded: Boolean) {
         val heightInPixels = if (isExpanded) dpToPx(250) else dpToPx(155)

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:layout_marginTop="10dp"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/imageButton3"
+            android:layout_width="58dp"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/baseline_arrow_back_24" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="349dp"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="12dp"
+            android:text="User Preference management"
+            android:textColor="@color/black"
+            android:textSize="23dp"
+            android:textStyle="bold" />
+
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:orientation="vertical"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                app:srcCompat="@drawable/baseline_shopping_bag_24" />
+
+            <TextView
+                android:id="@+id/textViewShopping"
+                android:layout_width="109dp"
+                android:layout_height="match_parent"
+                android:text="Shopping: "
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Shopping"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="98.72%"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarShopping"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:progress="99"
+            android:progressDrawable="@drawable/custom_seekbar_track"
+            android:thumb="@drawable/custom_thumb" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            >
+
+            <ImageView
+
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                app:srcCompat="@drawable/baseline_fastfood_24" />
+
+            <TextView
+                android:id="@+id/textViewRestaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Restaurant: "
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Restaurant"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0.10%"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarRestaurant"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:progress="1"
+            android:progressDrawable="@drawable/custom_seekbar_track"
+            android:thumb="@drawable/custom_thumb" />
+
+
+        <!-- Other Slider -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                app:srcCompat="@drawable/baseline_123_24" />
+
+            <TextView
+                android:id="@+id/textViewOther"
+                android:layout_width="106dp"
+                android:layout_height="match_parent"
+                android:text="Other: "
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Other"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="0.10%"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarOther"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:progress="1"
+            android:progressDrawable="@drawable/custom_seekbar_track"
+            android:thumb="@drawable/custom_thumb"
+
+            />
+
+        <!-- Attraction Slider -->
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                app:srcCompat="@drawable/baseline_forest_24" />
+
+            <TextView
+                android:id="@+id/textViewAttraction"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Attraction: "
+                android:textColor="@color/black"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/Attraction"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="1.09%"
+                android:textSize="20dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/seekBarAttraction"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:progress="1"
+            android:progressDrawable="@drawable/custom_seekbar_track"
+            android:thumb="@drawable/custom_thumb" />
+
+
+    </LinearLayout>
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="save"
+        app:cornerRadius="10dp"
+        app:backgroundTint="@color/blue"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginEnd="10dp"
+        android:textSize="20dp"
+        android:textColor="@color/white"
+        android:padding="12dp"
+        android:gravity="center" />
+
+
+
+</LinearLayout>

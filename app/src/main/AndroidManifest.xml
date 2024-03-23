@@ -48,7 +48,22 @@
             android:name=".logged_in.LoggedInActivity"
             android:exported="false" />
         <activity
+            android:name=".tourism_attraction.TourismActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tourism_attraction.ReviewDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".tourism_attraction.AddReviewActivity"
+            android:exported="false" />
+        <activity
+            android:name=".travel.TravelPlanActivity"
+            android:exported="false"/>
+        <activity
             android:name=".AddNewPostActivity"
+            android:exported="false" />
+        <activity
+            android:name=".notification.NotificationActivity"
             android:exported="false" />
         <activity
             android:name=".profile.EditProfileActivity"
@@ -83,13 +98,19 @@
             android:name=".login_register_reset.RegisterActivity"
             android:exported="false" />
 
+
+
         <activity
             android:name=".login_register_reset.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
+
+
             <intent-filter>
+
+
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />

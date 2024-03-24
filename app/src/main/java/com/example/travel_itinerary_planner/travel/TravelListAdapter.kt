@@ -8,13 +8,15 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.travel_itinerary_planner.R
 data class TravelData(
+    val docId: String,
     val date_start: String,
     val month_start: String,
     val date_end: String,
     val month_end: String,
     val title: String,
     val region: String,
-    val year: String
+    var year: String
+
 )
 
 data class TravelItem(
@@ -28,7 +30,12 @@ const val TYPE_HEADER = 0
 const val TYPE_ITEM = 1
 
 
-class TravelListAdapter(context: Context, items: List<TravelItem>) : ArrayAdapter<TravelItem>(context, 0, items) {
+class TravelListAdapter(
+    context: Context,
+    items: List<TravelItem>,
+    private val onItemClick: (TravelData) -> Unit,
+    private val onItemLongClick: (TravelData) -> Unit
+) : ArrayAdapter<TravelItem>(context, 0, items) {
 
     override fun getItemViewType(position: Int): Int {
         return getItem(position)?.type ?: TYPE_ITEM
@@ -37,30 +44,46 @@ class TravelListAdapter(context: Context, items: List<TravelItem>) : ArrayAdapte
     override fun getViewTypeCount(): Int {
         return 2 // because we have two types: header and item
     }
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         val itemType = getItemViewType(position)
         val itemView: View
         val holder: ViewHolder
 
+
+
         if (convertView == null) {
-            itemView = if (itemType == TYPE_HEADER) {
-                LayoutInflater.from(context).inflate(R.layout.header_travelyear, parent, false)
+            if (itemType == TYPE_HEADER) {
+                itemView = LayoutInflater.from(context).inflate(R.layout.header_travelyear, parent, false)
+                holder = ViewHolder(itemView, itemType)
             } else {
-                LayoutInflater.from(context).inflate(R.layout.travel_list_item, parent, false)
+                itemView = LayoutInflater.from(context).inflate(R.layout.travel_list_item, parent, false)
+                holder = ViewHolder(itemView, itemType)
+                itemView.setOnClickListener {
+                    getItem(position)?.data?.let(onItemClick)
+                }
             }
-            holder = ViewHolder(itemView, itemType)
             itemView.tag = holder
         } else {
             itemView = convertView
             holder = itemView.tag as ViewHolder
+            if (itemType == TYPE_ITEM) {
+                itemView.setOnClickListener {
+                    getItem(position)?.data?.let(onItemClick)
+                }
+            }
         }
 
+
         val item = getItem(position)
+        itemView.setOnLongClickListener {
+            item?.data?.let { data ->
+                onItemLongClick(data)
+            }
+            true
+        }
         if (itemType == TYPE_HEADER) {
             holder.headerTextView?.text = item?.header
-        } else {
-            // Make sure to cast item.data to a non-nullable type
+        } else if (itemType == TYPE_ITEM) {
             item?.data?.let { data ->
                 holder.dateTextView?.text = data.date_start
                 holder.monthTextView?.text = data.month_start
@@ -70,8 +93,12 @@ class TravelListAdapter(context: Context, items: List<TravelItem>) : ArrayAdapte
                 holder.monthTextView1?.text = data.month_end
             }
         }
+
         return itemView
     }
+
+
+
 
     private class ViewHolder(view: View, type: Int) {
         var headerTextView: TextView? = null

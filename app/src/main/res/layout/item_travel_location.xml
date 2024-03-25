@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:text="2:00 PM"
         android:textStyle="bold"
-        android:textSize="27dp"
+        android:textSize="25dp"
         android:textColor="@color/black"
         />
 
@@ -29,28 +29,28 @@
 
         <TextView
             android:id="@+id/textView22"
-            android:layout_width="222dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
             android:text="pavilion kuala lumpur"
             android:textColor="@color/black"
-            android:textSize="27dp"
+            android:textSize="25dp"
             android:textStyle="bold" />
 
         <TextView
             android:id="@+id/textView23"
-            android:layout_width="wrap_content"
+            android:layout_width="90dp"
             android:layout_height="wrap_content"
 
+            android:layout_gravity="center_vertical"
+            android:layout_marginStart="10dp"
             android:layout_marginBottom="0dp"
             android:text="(Executed)"
             android:textColor="@color/black"
-            android:textSize="20dp"
+            android:textSize="18dp"
             android:textStyle="bold"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
+
             />
 
         <ImageButton
@@ -71,7 +71,7 @@
 
         android:text="Pavilion kuala Lumpur, Jalan Bukit Binting, "
         android:textColor="#929392"
-        android:textSize="20dp"
+        android:textSize="17dp"
         android:textStyle="bold"
         android:maxLines="1"
         android:ellipsize="end"

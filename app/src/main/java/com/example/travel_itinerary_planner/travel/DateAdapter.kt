@@ -10,10 +10,15 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travel_itinerary_planner.R
+import java.util.Date
 
-class DateAdapter(private val dates: MutableList<DateItem>, private val context: Context) :
-    RecyclerView.Adapter<DateAdapter.DateViewHolder>(){
-    data class DateItem(val dayOfWeek: String, val dayOfMonth: String, var isSelected: Boolean)
+class DateAdapter(
+    private val dates: MutableList<DateItem>,
+    private val context: Context,
+    private val onDateSelected: (String) -> Unit,
+    private val onDateLongPressed: (String) -> Unit
+) : RecyclerView.Adapter<DateAdapter.DateViewHolder>() {
+    data class DateItem(val dayOfWeek: String, val dayOfMonth: String, var isSelected: Boolean, val fullDate: Date, val documentId: String)
 
 
     class DateViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -31,6 +36,10 @@ class DateAdapter(private val dates: MutableList<DateItem>, private val context:
         holder.dayOfWeek.text = dateItem.dayOfWeek
         holder.dayOfMonth.text = dateItem.dayOfMonth
         holder.itemView.isSelected = dateItem.isSelected
+        holder.itemView.setOnLongClickListener {
+            onDateLongPressed(dateItem.documentId)
+            true
+        }
 
         holder.itemView.setBackgroundColor(
             if (dateItem.isSelected) ContextCompat.getColor(context, R.color.selectedColor) else ContextCompat.getColor(context, R.color.defaultColor)
@@ -47,15 +56,13 @@ class DateAdapter(private val dates: MutableList<DateItem>, private val context:
         holder.dayOfWeek.setTextColor(textColor)
         holder.dayOfMonth.setTextColor(textColor)
 
-        // Handle the item click
+
         holder.itemView.setOnClickListener {
-
             if (!dateItem.isSelected) {
-
                 dates.forEach { it.isSelected = false }
                 dateItem.isSelected = true
-
                 notifyDataSetChanged()
+                onDateSelected(dateItem.documentId)
             }
         }
     }

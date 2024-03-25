@@ -9,6 +9,7 @@ import android.widget.TextView
 import com.example.travel_itinerary_planner.R
 
 data class NotificationItem(
+    val id: String,
     val title: String,
     val description: String,
     val date: String

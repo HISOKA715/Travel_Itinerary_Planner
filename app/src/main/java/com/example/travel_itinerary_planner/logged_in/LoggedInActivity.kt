@@ -1,10 +1,12 @@
 package com.example.travel_itinerary_planner.logged_in
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
+import com.example.travel_itinerary_planner.notification.NotificationDetailActivity
 import com.google.firebase.auth.FirebaseAuth
+
 
 open class LoggedInActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
@@ -24,4 +26,6 @@ open class LoggedInActivity : AppCompatActivity() {
             finish()
         }
     }
+
+
 }

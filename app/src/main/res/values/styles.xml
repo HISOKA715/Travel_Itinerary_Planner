@@ -18,6 +18,23 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">25dp</item>
     </style>
+    <style name="RoundedImageView4">
+        <item name="shapeAppearance">@style/RoundedImageView2.ShapeAppearance</item>
+        <item name="shapeAppearanceOverlay">@style/RoundedImageView2.ShapeAppearance</item>
+    </style>
+    <style name="RoundedImageView4.ShapeAppearance">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">10dp</item>
+    </style>
+
+    <style name="RoundedImageView3">
+        <item name="shapeAppearance">@style/RoundedImageView2.ShapeAppearance</item>
+        <item name="shapeAppearanceOverlay">@style/RoundedImageView2.ShapeAppearance</item>
+    </style>
+    <style name="RoundedImageView3.ShapeAppearance">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">7dp</item>
+    </style>
 
     <style name="RatingBar" parent="Theme.AppCompat">
         <item name="colorControlNormal">@color/light_grey</item>

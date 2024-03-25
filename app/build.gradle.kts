@@ -60,6 +60,8 @@ dependencies {
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
     implementation ("com.github.bumptech.glide:glide:4.12.0")
     implementation("androidx.recyclerview:recyclerview:1.3.0")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
+    implementation ("com.google.firebase:firebase-analytics:21.6.1")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.12.0")
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.google.firebase:firebase-core:21.1.1")

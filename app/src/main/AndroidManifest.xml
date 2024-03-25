@@ -59,7 +59,8 @@
             android:name=".notification.NotificationDetailActivity"
             android:exported="true" />
 
-
+        <activity android:name=".travel.LocationFindActivity"
+            android:exported="false"/>
 
         <activity
             android:name=".logged_in.LoggedInActivity"

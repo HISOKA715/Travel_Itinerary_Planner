@@ -66,7 +66,7 @@ dependencies {
     implementation ("com.squareup.picasso:picasso:2.71828")
     implementation ("com.google.firebase:firebase-core:21.1.1")
     implementation ("com.google.firebase:firebase-firestore:24.10.2")
-    
+    implementation ("com.google.android.libraries.places:places:3.3.0")
     implementation ("com.google.firebase:firebase-auth:22.3.1")
     implementation("de.hdodenhof:circleimageview:3.1.0")
     implementation("androidx.core:core-ktx:1.12.0")

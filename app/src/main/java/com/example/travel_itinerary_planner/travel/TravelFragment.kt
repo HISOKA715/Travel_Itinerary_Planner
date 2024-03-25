@@ -92,7 +92,7 @@ class TravelFragment : LoggedInFragment() {
                 val docId = document.id
 
                 document.reference.collection("LocationDate")
-                    .orderBy("LocationDate", Query.Direction.DESCENDING)
+                    .orderBy("LocationDate", Query.Direction.ASCENDING)
                     .get()
                     .addOnSuccessListener { locationSnapshot ->
                         if (locationSnapshot.documents.isNotEmpty()) {

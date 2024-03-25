@@ -4,6 +4,7 @@ import LocationAdapter
 import LocationItem
 import android.app.DatePickerDialog
 import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
@@ -17,12 +18,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travel_itinerary_planner.R
-
 import com.example.travel_itinerary_planner.databinding.PlanDetailBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
@@ -56,7 +57,16 @@ class TravelPlanActivity : AppCompatActivity() {
         binding.imageButton5.setOnClickListener {
             showDatePicker()
         }
+
+        binding.imageButton10.setOnClickListener {
+            val intent = Intent(this@TravelPlanActivity, LocationFindActivity::class.java)
+            startActivity(intent)
+        }
+
     }
+
+
+
 
 
 
@@ -118,18 +128,110 @@ class TravelPlanActivity : AppCompatActivity() {
     private fun setupDateRecyclerView(docId: String) {
         dateAdapter = DateAdapter(dateList, this,
             { documentId ->
-                // Existing click listener logic
                 fetchLocations(docId, documentId)
             },
             { documentId ->
-                // New long press logic
                 showDeleteConfirmationDialog(docId, documentId)
+            },
+            object : OnItemDoubleTapListener {
+                override fun onItemDoubleTapped(documentId: String, date: Date) {
+                    showDatePicker(documentId, date,docId)
+                }
+
+                private fun showDatePicker(documentId: String, currentDate: Date,docId:String) {
+                    val calendar = Calendar.getInstance().apply {
+                        time = currentDate
+                        timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+                    }
+
+                    DatePickerDialog(this@TravelPlanActivity, { _, year, month, dayOfMonth ->
+                        val newDateCalendar = Calendar.getInstance().apply {
+                            set(year, month, dayOfMonth)
+                            timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+                        }
+                        Log.d("DatePicker", "Selected: ${newDateCalendar.time}")
+                        updateDate(documentId, newDateCalendar.time,docId)
+                    }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+                }
             }
         )
         binding.recyclerViewDates.apply {
             layoutManager = LinearLayoutManager(this@TravelPlanActivity, LinearLayoutManager.HORIZONTAL, false)
             adapter = dateAdapter
             addItemDecoration(HorizontalSpaceItemDecoration(8))
+        }
+    }
+
+    private fun updateDate(documentId: String, newDate: Date, docId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+
+        // Prepare a Calendar instance with the newDate
+        val calendar = Calendar.getInstance().apply {
+            timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+            time = newDate
+            add(Calendar.HOUR_OF_DAY, 8) // Add 8 hours to the date
+        }
+
+        val adjustedNewDate = calendar.time
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).apply {
+            timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+        }
+        val newDateString = sdf.format(adjustedNewDate)
+
+        val locationDateRef = FirebaseFirestore.getInstance().collection("users/$userId/Travel_Plan/$docId/LocationDate")
+        locationDateRef.whereEqualTo("LocationDateString", newDateString).get().addOnSuccessListener { documents ->
+            if (!documents.isEmpty) {
+                Toast.makeText(this, "This date already exists. Please choose another date.", Toast.LENGTH_LONG).show()
+                return@addOnSuccessListener
+            }
+
+            // Prepare update map with adjusted date
+            val updateMap = mapOf(
+                "LocationDate" to adjustedNewDate,
+                "LocationDateString" to newDateString
+            )
+
+            // Perform update with the adjusted date
+            locationDateRef.document(documentId).update(updateMap).addOnSuccessListener {
+                updateLocationTimes(documentId, adjustedNewDate, docId) // Pass adjusted date for further updates
+                Toast.makeText(this, "Date updated successfully.", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { e ->
+                Toast.makeText(this, "Error updating date: ${e.message}", Toast.LENGTH_LONG).show()
+            }
+        }
+    }
+
+    private fun updateLocationTimes(documentId: String, newDate: Date, docId: String) {
+
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        val locationsRef = FirebaseFirestore.getInstance()
+            .collection("users/$userId/Travel_Plan/$docId/LocationDate/$documentId/Location")
+
+        locationsRef.get().addOnSuccessListener { snapshot ->
+            val newCalendar = Calendar.getInstance().apply {
+                time = newDate
+                timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+            }
+            Log.d("UpdateLocationTime", "Updating to: ${newCalendar.time}")
+
+            snapshot.documents.forEach { document ->
+                document.getTimestamp("LocationTime")?.toDate()?.let { originalTime ->
+
+                    val originalCalendar = Calendar.getInstance().apply {
+                        time = originalTime
+                        timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+                    }
+                    val newCalendar = Calendar.getInstance().apply {
+                        timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
+                        time = newDate
+                        set(Calendar.HOUR_OF_DAY, originalCalendar.get(Calendar.HOUR_OF_DAY))
+                        set(Calendar.MINUTE, originalCalendar.get(Calendar.MINUTE))
+                    }
+                    Log.d("FinalAdjustment", "Final: ${newCalendar.time}")
+                    locationsRef.document(document.id).update("LocationTime", newCalendar.time)
+                }
+            }
         }
     }
 
@@ -262,8 +364,6 @@ class TravelPlanActivity : AppCompatActivity() {
                         dateList.add(DateAdapter.DateItem(dayOfWeek, dayOfMonth, false, date,document.id))
                     }
                 }
-
-
                 dateAdapter.notifyDataSetChanged()
             }
     }

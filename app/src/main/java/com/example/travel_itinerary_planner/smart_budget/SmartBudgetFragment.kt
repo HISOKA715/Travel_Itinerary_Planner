@@ -7,6 +7,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.fragment.findNavController
 import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentSmartBudgetBinding
@@ -49,6 +52,16 @@ class SmartBudgetFragment : LoggedInFragment() {
             startActivity(intent)
         }
 
+        binding.toolbarSmart.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.menu_smart_drawer-> {
+                    val drawerLayout = requireActivity().findViewById<DrawerLayout>(R.id.drawer_smart_layout)
+                    drawerLayout.openDrawer(GravityCompat.END)
+                    true
+                }
+                else -> false
+            }
+        }
     }
 
 

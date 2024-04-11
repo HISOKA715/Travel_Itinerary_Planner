@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".tourism_attraction.TourismActivity"
    >
 
     <ScrollView
@@ -15,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            tools:context=".TourismActivity">
+            >
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -228,6 +229,15 @@
                         android:textColor="@color/black"
                         android:textSize="25dp"
                         android:textStyle="bold" />
+
+                    <com.google.android.gms.maps.MapView
+                        android:layout_marginTop="10dp"
+                        android:id="@+id/mapView"
+                        android:layout_width="match_parent"
+                        android:layout_marginStart="10dp"
+                        android:layout_marginEnd="10dp"
+                        android:layout_height="400dp" />
+
                 </LinearLayout>
 
             </FrameLayout>
@@ -312,7 +322,7 @@
                                     android:textStyle="bold" />
 
                                 <ProgressBar
-                                    android:id="@+id/rate_5"
+                                    android:id="@+id/rate51"
                                     style="?android:attr/progressBarStyleHorizontal"
                                     android:layout_width="175dp"
                                     android:layout_height="wrap_content"
@@ -320,7 +330,7 @@
                                     android:layout_marginTop="3dp"
                                     android:maxHeight="10dp"
                                     android:minHeight="13dp"
-                                    android:progress="80"
+                                    android:progress="0"
                                     android:progressDrawable="@drawable/progress_yellow" />
                             </LinearLayout>
 
@@ -339,7 +349,7 @@
                                     android:textStyle="bold" />
 
                                 <ProgressBar
-                                    android:id="@+id/rate_4"
+                                    android:id="@+id/rate41"
                                     style="?android:attr/progressBarStyleHorizontal"
                                     android:layout_width="175dp"
                                     android:layout_height="wrap_content"
@@ -347,7 +357,7 @@
                                     android:layout_marginTop="3dp"
                                     android:maxHeight="10dp"
                                     android:minHeight="13dp"
-                                    android:progress="80"
+                                    android:progress="0"
                                     android:progressDrawable="@drawable/progress_yellow" />
                             </LinearLayout>
 
@@ -366,7 +376,7 @@
                                     android:textStyle="bold" />
 
                                 <ProgressBar
-                                    android:id="@+id/rate_3"
+                                    android:id="@+id/rate31"
                                     style="?android:attr/progressBarStyleHorizontal"
                                     android:layout_width="175dp"
                                     android:layout_height="wrap_content"
@@ -374,7 +384,7 @@
                                     android:layout_marginTop="3dp"
                                     android:maxHeight="10dp"
                                     android:minHeight="13dp"
-                                    android:progress="80"
+                                    android:progress="0"
                                     android:progressDrawable="@drawable/progress_yellow" />
                             </LinearLayout>
 
@@ -393,7 +403,7 @@
                                     android:textStyle="bold" />
 
                                 <ProgressBar
-                                    android:id="@+id/rate_2"
+                                    android:id="@+id/rate21"
                                     style="?android:attr/progressBarStyleHorizontal"
                                     android:layout_width="175dp"
                                     android:layout_height="wrap_content"
@@ -401,7 +411,7 @@
                                     android:layout_marginTop="3dp"
                                     android:maxHeight="10dp"
                                     android:minHeight="13dp"
-                                    android:progress="80"
+                                    android:progress="0"
                                     android:progressDrawable="@drawable/progress_yellow" />
                             </LinearLayout>
 
@@ -420,7 +430,7 @@
                                     android:textStyle="bold" />
 
                                 <ProgressBar
-                                    android:id="@+id/rate_1"
+                                    android:id="@+id/rate11"
                                     style="?android:attr/progressBarStyleHorizontal"
                                     android:layout_width="175dp"
                                     android:layout_height="wrap_content"
@@ -428,7 +438,7 @@
                                     android:layout_marginTop="3dp"
                                     android:maxHeight="10dp"
                                     android:minHeight="13dp"
-                                    android:progress="80"
+                                    android:progress="0"
                                     android:progressDrawable="@drawable/progress_yellow" />
                             </LinearLayout>
                         </LinearLayout>
@@ -441,10 +451,11 @@
                             android:orientation="vertical">
 
                             <TextView
+                                android:id="@+id/ratetext"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="3.7"
+                                android:text="0.0"
                                 android:textColor="@color/black"
                                 android:textSize="40sp"
                                 android:textStyle="bold" />
@@ -459,17 +470,32 @@
                                 android:isIndicator="true"
                                 android:max="5"
                                 android:numStars="5"
-                                android:rating="3.7"
+                                android:rating="0"
                                 android:stepSize="0.1"
                                 android:theme="@style/RatingBar" />
+                            <LinearLayout
+                                android:layout_width="170dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="30dp"
+                                android:orientation="horizontal"
+                                android:gravity="center">
 
+                                <TextView
+                                    android:id="@+id/totalrate"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_gravity="center"
+                                    android:text="0"
+                                    android:textColor="@color/black"
+                                    android:textStyle="bold" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:text="7 Ratings"
+                                android:text=" Ratings"
                                 android:textColor="@color/black"
                                 android:textStyle="bold" />
+                            </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
 
@@ -484,9 +510,8 @@
                     <ListView
                         android:id="@+id/list_review"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:divider="@null"
-                        android:dividerHeight="0dp"/>
+                        android:layout_height="wrap_content"
+                       />
                 </LinearLayout>
 
             </FrameLayout>

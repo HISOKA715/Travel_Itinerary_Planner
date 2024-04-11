@@ -7,14 +7,8 @@
     android:layout_height="match_parent"
     android:padding="0dp"
     android:orientation="vertical"
-
+    tools:context=".tourism_attraction.AddReviewActivity"
     >
-    <LinearLayout
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:orientation="vertical"
-        tools:context=".AddReviewActivity"
-        >
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -76,7 +70,7 @@
             android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_weight="1"
-            android:text="3.7"
+            android:text="0.0"
             android:textColor="@color/black"
             android:textSize="40dp"
             android:textStyle="bold"
@@ -142,21 +136,35 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"/>
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp"
+        >
+        <TextView
+            android:id="@+id/textViewCharCount1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0"
+            android:layout_gravity="end" />
 
     <TextView
         android:id="@+id/textViewCharCount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="0/1000 characters"
+        android:text="/1000 characters"
         android:layout_gravity="end"
         android:layout_marginEnd="10dp"/>
+    </LinearLayout>
 
-
-    <ImageButton
-        android:id="@+id/imageButton12"
+    <ImageView
+        android:id="@+id/imageViewSelectedImage"
         android:layout_width="match_parent"
         android:layout_height="267dp"
-        android:visibility="gone"/>
+        android:visibility="gone"
+        android:scaleType="centerCrop"/>
+
 
     <View
         android:layout_width="match_parent"
@@ -180,6 +188,7 @@
             android:background="@android:color/transparent"/>
 
         <ImageButton
+            android:id="@+id/addcamera"
             android:layout_width="48dp"
             android:layout_height="50dp"
             android:src="@drawable/baseline_camera_alt_24"
@@ -209,5 +218,4 @@
         android:textColor="@color/white"
         android:padding="12dp"
         android:gravity="center" />
-    </LinearLayout>
 </LinearLayout>

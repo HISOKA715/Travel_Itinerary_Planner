@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Travel_Itinerary_Planner</string>
     <string name="title_activity_bottom_navigation">BottomNavigationActivity</string>
     <string name="title_home">Home</string>
@@ -68,6 +68,24 @@
         <item>Recommendation</item>
         <item>Option 2</item>
     </string-array>
+<string-array name="search_location" >
+    <item>All</item>
+    <item>Kuala Lumpur</item>
+    <item>Selangor</item>
+    <item>Johor</item>
+    <item>Terengganu</item>
+    <item>Kedah</item>
+    <item>Kelantan</item>
+    <item>Malacca</item>
+    <item>Negeri Sembilan</item>
+    <item>Pahang</item>
+    <item>Penang</item>
+    <item>Perak</item>
+    <item>Perlis</item>
+    <item>Sabah</item>
+    <item>Sarawak</item>
+</string-array>
+
 
     <string-array name="feedback_location">
         <item>Kuala Lumpur</item>
@@ -85,7 +103,25 @@
         <item>Sabah</item>
         <item>Sarawak</item>
     </string-array>
+
+
+
     <string name="default_notification_channel_id">my_default_channel</string>
+
+        <string-array name="tourism_categories">
+            <item>All</item>
+            <item>Shopping</item>
+            <item>Unknown</item>
+            <item>Tourism Attraction</item>
+            <item>Restaurant</item>
+        </string-array>
+
+
+    <string-array name="travel_plan_options">
+        <item>Top Travel Plan</item>
+        <item>Recommendation</item>
+    </string-array>
+
     <string-array name="feedback_accurate">
         <item>Accurate</item>
         <item>Not Accurate</item>

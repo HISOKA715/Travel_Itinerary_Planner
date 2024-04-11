@@ -8,13 +8,14 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.travel_itinerary_planner.R
 
-data class LocationData(val name: String, val distance: String)
+data class LocationData(val id: String, val name: String, val clickRate: Long)
+
 class TopAdapter (context: Context, private val dataSource: List<LocationData>) :
     ArrayAdapter<LocationData>(context, R.layout.top_attraction, dataSource) {
     private class ViewHolder {
         lateinit var numberLabel: TextView
         lateinit var locationName: TextView
-        lateinit var distance: TextView
+        lateinit var clickRate: TextView
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -27,7 +28,7 @@ class TopAdapter (context: Context, private val dataSource: List<LocationData>) 
             holder = ViewHolder()
             holder.numberLabel = view.findViewById(R.id.numberLabel)
             holder.locationName = view.findViewById(R.id.locationName)
-            holder.distance = view.findViewById(R.id.distance)
+            holder.clickRate = view.findViewById(R.id.clickRate)
             view.tag = holder
         } else {
             holder = convertView.tag as ViewHolder
@@ -37,7 +38,7 @@ class TopAdapter (context: Context, private val dataSource: List<LocationData>) 
         val locationData = getItem(position)
         holder.numberLabel.text = (position + 1).toString()
         holder.locationName.text = locationData?.name
-        holder.distance.text = locationData?.distance
+        holder.clickRate.text = locationData?.clickRate.toString()
 
         return view
     }

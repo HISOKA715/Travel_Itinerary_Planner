@@ -5,6 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".travel.LocationAddActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,7 +39,9 @@
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:maxLines="1"
+                    android:singleLine="true"/>
 
             </com.google.android.material.textfield.TextInputLayout>
         </LinearLayout>
@@ -90,12 +97,12 @@
                 android:layout_width="307dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="10dp"
-                android:layout_marginBottom="36dp"
+                android:layout_marginBottom="25dp"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Suria KLCC hghjghjghjghjghjdfgdfhj"
                 android:textColor="@color/white"
-                android:textSize="30dp"
+                android:textSize="25dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
                 app:layout_constraintStart_toStartOf="@+id/imageView2" />
@@ -108,7 +115,7 @@
                 android:layout_marginBottom="10dp"
                 android:text="Kuala Lumpur"
                 android:textColor="@color/white"
-                android:textSize="20dp"
+                android:textSize="17dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="@+id/imageView2"
                 app:layout_constraintStart_toStartOf="@+id/imageView2" />
@@ -152,7 +159,6 @@
             android:hint="Select Time" />
 
         <Button
-
             android:id="@+id/executedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -160,7 +166,7 @@
             android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:backgroundTint="@android:color/transparent"
-            android:text="Executed"
+            android:text="Select Status"
             android:textColor="@color/black"
             app:cornerRadius="5dp"
             app:strokeColor="@color/grayText"
@@ -168,7 +174,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
 android:layout_height="100dp"
 
         android:gravity="center_vertical"
@@ -176,8 +182,8 @@ android:layout_height="100dp"
         android:padding="8dp">
 
         <Button
-            android:id="@+id/editPlanButton"
-            android:layout_width="336dp"
+            android:id="@+id/PlanButton"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="3dp"
             android:layout_marginEnd="10dp"
@@ -188,18 +194,7 @@ android:layout_height="100dp"
             android:textColor="@color/white"
             app:cornerRadius="5dp" />
 
-        <View
-            android:layout_width="2dp"
-            android:layout_height="30dp"
-            android:background="@android:color/darker_gray" />
-
-        <ImageView
-            android:id="@+id/deleteIcon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent"
-            android:padding="8dp"
-            android:src="@drawable/baseline_delete_24" />
     </LinearLayout>
-
+    </LinearLayout>
 </LinearLayout>
+

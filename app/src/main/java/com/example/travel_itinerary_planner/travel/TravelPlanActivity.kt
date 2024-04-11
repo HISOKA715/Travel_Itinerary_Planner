@@ -14,27 +14,31 @@ import android.widget.EditText
 import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.PlanDetailBinding
+import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.GeoPoint
+import com.google.firebase.firestore.Query
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 import java.util.TimeZone
 
-class TravelPlanActivity : AppCompatActivity() {
+
+
+class TravelPlanActivity : LoggedInActivity(), LocationAdapter.OnLocationItemClickListener {
     private lateinit var listView: ListView
     private lateinit var binding: PlanDetailBinding
     private lateinit var dateAdapter: DateAdapter
     private lateinit var locationAdapter: LocationAdapter
     private var locationItems: ArrayList<LocationItem> = ArrayList()
     private var dateList = mutableListOf<DateAdapter.DateItem>()
-
+    private var selectedLocationDateID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,9 +46,7 @@ class TravelPlanActivity : AppCompatActivity() {
         setContentView(binding.root)
         val docId = intent.getStringExtra("docId") ?: return
         fetchAndDisplayPlanName(docId)
-        locationAdapter = LocationAdapter(this, locationItems) { clickedItem ->
-            Log.d("LocationClicked", "Clicked on: ${clickedItem.title}")
-        }
+        locationAdapter = LocationAdapter(this, locationItems, this, docId, selectedLocationDateID)
         listView = findViewById(R.id.location_list)
         listView.adapter = locationAdapter
         setupDateRecyclerView(docId)
@@ -57,18 +59,43 @@ class TravelPlanActivity : AppCompatActivity() {
         binding.imageButton5.setOnClickListener {
             showDatePicker()
         }
-
-        binding.imageButton10.setOnClickListener {
-            val intent = Intent(this@TravelPlanActivity, LocationFindActivity::class.java)
-            startActivity(intent)
+        binding.textView19.setOnClickListener {
+            val localSelectedLocationDateID = selectedLocationDateID
+            if (localSelectedLocationDateID != null) {
+                fetchFirstReadyLocationAndNavigate(docId, localSelectedLocationDateID)
+            } else {
+                Toast.makeText(this, "Please select a date before proceeding.", Toast.LENGTH_SHORT).show()
+            }
         }
 
+        binding.imageButton10.setOnClickListener {
+            if (selectedLocationDateID != null) {
+                val intent = Intent(this@TravelPlanActivity, LocationFindActivity::class.java).apply {
+                    putExtra("travel_planID", docId)
+                    putExtra("locationDateID", selectedLocationDateID)
+                }
+                startActivity(intent)
+            } else {
+                Toast.makeText(this@TravelPlanActivity, "Please select a date before adding locations.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 
 
-
-
-
+    override fun onLocationItemClick(address:String,documentId: String ,travelPlanID: String?, locationDateID: String?) {
+        val intent = Intent(this, LocationFindEditActivity::class.java).apply {
+            putExtra("travel_planID", travelPlanID)
+            putExtra("locationDateID", locationDateID)
+            putExtra("locationId", documentId)
+            putExtra("address", address)
+        }
+        startActivity(intent)
+    }
+    private fun onDateSelected(documentId: String,docId:String) {
+        selectedLocationDateID = documentId
+        locationAdapter = LocationAdapter(this, locationItems, this, docId, selectedLocationDateID)
+        listView.adapter = locationAdapter
+    }
 
     private fun showDatePicker() {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone("Asia/Kuala_Lumpur"), Locale.getDefault())
@@ -122,12 +149,47 @@ class TravelPlanActivity : AppCompatActivity() {
                 }
             }
     }
+    private fun navigateToMapActivity(geoPoint: GeoPoint, docId: String, locationDateId: String, locationId: String) {
+        val intent = Intent(this, MapActivity::class.java).apply {
+            putExtra("latitude", geoPoint.latitude)
+            putExtra("longitude", geoPoint.longitude)
+            putExtra("docId", docId)
+            putExtra("locationDateId", locationDateId)
+            putExtra("locationId", locationId)
+        }
+        startActivity(intent)
+    }
 
-
+    private fun fetchFirstReadyLocationAndNavigate(docId: String, locationDateId: String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
+        FirebaseFirestore.getInstance()
+            .collection("users/$userId/Travel_Plan/$docId/LocationDate/$locationDateId/Location")
+            .whereEqualTo("LocationStatus", "Ready")
+            .orderBy("LocationTime", Query.Direction.ASCENDING)
+            .limit(1)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (!documents.isEmpty) {
+                    val documentId =  documents.documents.first().id
+                    val document = documents.documents.first()
+                    val geoPoint = document.get("point") as GeoPoint?
+                    geoPoint?.let {
+                        navigateToMapActivity(it,docId,locationDateId,documentId)
+                    } ?: Toast.makeText(this, "GeoPoint not found.", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "No 'Ready' locations found.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("TravelPlanActivity", "Error fetching location: ", e)
+                Toast.makeText(this, "Error fetching location: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+    }
 
     private fun setupDateRecyclerView(docId: String) {
         dateAdapter = DateAdapter(dateList, this,
             { documentId ->
+                onDateSelected(documentId,docId)
                 fetchLocations(docId, documentId)
             },
             { documentId ->
@@ -165,11 +227,9 @@ class TravelPlanActivity : AppCompatActivity() {
     private fun updateDate(documentId: String, newDate: Date, docId: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
 
-        // Prepare a Calendar instance with the newDate
         val calendar = Calendar.getInstance().apply {
             timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
             time = newDate
-            add(Calendar.HOUR_OF_DAY, 8) // Add 8 hours to the date
         }
 
         val adjustedNewDate = calendar.time
@@ -186,15 +246,13 @@ class TravelPlanActivity : AppCompatActivity() {
                 return@addOnSuccessListener
             }
 
-            // Prepare update map with adjusted date
             val updateMap = mapOf(
                 "LocationDate" to adjustedNewDate,
                 "LocationDateString" to newDateString
             )
 
-            // Perform update with the adjusted date
             locationDateRef.document(documentId).update(updateMap).addOnSuccessListener {
-                updateLocationTimes(documentId, adjustedNewDate, docId) // Pass adjusted date for further updates
+                updateLocationTimes(documentId, adjustedNewDate, docId)
                 Toast.makeText(this, "Date updated successfully.", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener { e ->
                 Toast.makeText(this, "Error updating date: ${e.message}", Toast.LENGTH_LONG).show()
@@ -252,7 +310,7 @@ class TravelPlanActivity : AppCompatActivity() {
                         timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
                     }
                     val time = document.getTimestamp("LocationTime")?.toDate()?.let { sdf.format(it) } ?: "N/A"
-                    locationItems.add(LocationItem(time, name, status, address))
+                    locationItems.add(LocationItem(document.id,time, name, status, address))
                 }
                 locationAdapter.notifyDataSetChanged()
             }
@@ -293,7 +351,6 @@ class TravelPlanActivity : AppCompatActivity() {
                 if (documentSnapshot.exists()) {
                     val planName = documentSnapshot.getString("PlanName") ?: "Unnamed Plan"
                     binding.textView18.text = planName
-
                     binding.textView18.setOnClickListener {
                         showEditPlanNameDialog(planName, docId)
                     }
@@ -346,9 +403,7 @@ class TravelPlanActivity : AppCompatActivity() {
                 if (e != null || snapshot == null) {
                     return@addSnapshotListener
                 }
-
                 dateList.clear()
-
                 for (document in snapshot.documents) {
                     document.getTimestamp("LocationDate")?.toDate()?.let { date ->
 

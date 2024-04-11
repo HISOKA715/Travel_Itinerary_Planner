@@ -7,7 +7,8 @@ import android.widget.ArrayAdapter
 import android.widget.TextView
 import com.example.travel_itinerary_planner.R
 
-data class DataModel(val primaryText: String)
+data class DataModel(val query: String, val timestamp: Long)
+
 class MyGridAdapter(context: Context, private val resource: Int, private val items: List<DataModel>)
     : ArrayAdapter<DataModel>(context, resource, items) {
 
@@ -15,7 +16,7 @@ class MyGridAdapter(context: Context, private val resource: Int, private val ite
         val itemView = convertView ?: LayoutInflater.from(context).inflate(resource, parent, false)
         val primaryTextView = itemView.findViewById<TextView>(R.id.textViewPrimary)
         val item = getItem(position)
-        primaryTextView.text = item?.primaryText
+        primaryTextView.text = item?.query
         return itemView
     }
 

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp"
+    android:background="@color/light_blue"
+    android:layout_margin="16dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="start|center_vertical">
+        <TextView
+            android:id="@+id/textViewTripName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginBottom="4dp"
+            android:text="Trip Name" />
+    <ImageView
+        android:id="@+id/imageViewSmartMoreOptions"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:src="@drawable/baseline_more_vert_24"
+        android:contentDescription="More Options"
+        android:clickable="true"
+        android:focusable="true"
+        android:padding="8dp"
+        app:tint="@color/black" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewTripDates"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:layout_marginBottom="4dp"
+        android:drawablePadding="10dp"
+        android:text="StartDate - EndDate"
+        app:drawableStartCompat="@drawable/baseline_calendar_month_24"
+        app:drawableTint="@color/dark_blue" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            android:drawablePadding="10dp"
+            app:drawableTint="@color/dark_blue"
+            app:drawableStartCompat="@drawable/baseline_money_24"
+            android:id="@+id/textViewCurrency"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:text="Currency"
+            android:layout_marginEnd="8dp"
+            android:layout_gravity="center_vertical" />
+
+        <TextView
+            android:id="@+id/textViewBudget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:text="Budget"
+            android:layout_gravity="center_vertical" />
+    </LinearLayout>
+
+</LinearLayout>

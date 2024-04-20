@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarEditTrip"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:title="Add"
+        app:titleMarginStart="130dp" />
+
+    <EditText
+
+        android:id="@+id/tripEditName"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
+        android:drawableStart="@drawable/baseline_card_travel_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/dark_blue"
+        android:ems="10"
+        android:focusable="true"
+        android:hint="Trip Name"
+        android:padding="8dp"
+        android:tag="tripName"
+        android:textColor="@color/black" />
+
+    <EditText
+
+        android:id="@+id/currencyEdit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
+        android:drawableStart="@drawable/baseline_currency_yen_24"
+        android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/dark_blue"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="Currency"
+        android:inputType="date"
+        android:padding="8dp"
+        android:tag="currency"
+        android:textColor="@color/black" />
+
+
+    <EditText
+
+        android:id="@+id/budgetEdit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
+        android:drawableStart="@drawable/baseline_money_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/dark_blue"
+        android:ems="10"
+        android:focusable="true"
+        android:hint="Budget (Optional)"
+        android:inputType="numberDecimal"
+        android:padding="8dp"
+        android:tag="budget"
+        android:textColor="@color/black" />
+
+
+    <EditText
+
+        android:id="@+id/startDateEdit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
+        android:drawableStart="@drawable/baseline_calendar_month_24"
+        android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/dark_blue"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="Start Date"
+        android:inputType="date"
+        android:padding="8dp"
+        android:tag="startDate"
+        android:textColor="@color/black" />
+
+
+    <EditText
+
+        android:id="@+id/endDateEdit"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/edit_text_background"
+        android:drawableStart="@drawable/baseline_calendar_month_24"
+        android:drawableEnd="@drawable/baseline_arrow_forward_ios_24"
+        android:drawablePadding="10dp"
+        android:drawableTint="@color/dark_blue"
+        android:ems="10"
+        android:focusable="false"
+        android:hint="End Date"
+        android:inputType="date"
+        android:padding="8dp"
+        android:tag="startDate"
+        android:textColor="@color/black" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:drawableStart="@drawable/baseline_sunny_24"
+            android:drawableTint="#FF9800"
+            android:fontFamily="@font/roboto"
+            android:text="The duration of the trip is "
+            android:textColor="@color/dark_blue"
+            android:textSize="20sp" />
+
+        <TextView
+            android:id="@+id/textViewEditTripDays"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
+            android:text="7"
+            android:textColor="@color/dark_blue"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/roboto"
+            android:text=" days."
+            android:textColor="@color/dark_blue"
+            android:textSize="20sp" />
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/buttonSaveEditTrip"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="130dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="10dp"
+        android:backgroundTint="@color/blue"
+        android:fontFamily="@font/roboto"
+        android:text="Save"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+</LinearLayout>

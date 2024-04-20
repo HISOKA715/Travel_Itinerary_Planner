@@ -25,21 +25,82 @@
             app:titleMarginStart="80dp"
             app:menu="@menu/toolbar_smart_menu" />
 
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewSmart"
+        <LinearLayout
+            android:id="@+id/linearTotalExpenses"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="?attr/actionBarSize"
-            android:visibility="gone" />
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/rounded_button"
+            android:orientation="vertical"
+            android:visibility="gone">
 
-        <ImageView
-            android:id="@+id/imageViewSmart"
+            <TextView
+                android:id="@+id/underToolbarTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="10dp"
+                android:text="T0TAL EXPENSES"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                app:drawableStartCompat="@drawable/baseline_generating_tokens_24"
+                app:drawableTint="@color/white" />
+
+            <TextView
+                android:id="@+id/totalCurrencyAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:fontFamily="@font/roboto"
+                android:textColor="@color/white"
+                android:textSize="25sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="?attr/actionBarSize"
-            android:visibility="visible"
-            app:srcCompat="@drawable/travel_smart_start" />
+            android:layout_height="match_parent">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerViewSmart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="150dp"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/imageViewSmart"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:visibility="gone"
+                app:srcCompat="@drawable/travel_smart_start" />
+
+            <ImageView
+                android:id="@+id/imageViewSmartExpenses"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:visibility="gone"
+                app:srcCompat="@drawable/travel_smart_expenses" />
+
+            <ImageView
+                android:id="@+id/imageButtonAddExpenses"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_gravity="end|bottom"
+                android:layout_marginRight="16dp"
+                android:layout_marginBottom="3dp"
+                android:elevation="8dp"
+                android:visibility="gone"
+
+                app:srcCompat="@drawable/baseline_add_box_24"
+                app:tint="@color/dark_blue" />
+
+        </FrameLayout>
+
     </FrameLayout>
 
     <LinearLayout
@@ -49,28 +110,30 @@
         android:orientation="vertical"
         android:background="@color/white">
 
-        <ScrollView
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbarSmartTrip"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:minHeight="?attr/actionBarSize"
+            android:theme="?attr/actionBarTheme"
+            app:menu="@menu/toolbar_smart_drawer_menu"
+            app:title="Trips"
+            app:titleMarginStart="140dp" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerViewSmartTrip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone" />
 
-                <androidx.appcompat.widget.Toolbar
-                    android:id="@+id/toolbarSettings"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/white"
-                    android:minHeight="?attr/actionBarSize"
-                    android:theme="?attr/actionBarTheme"
-                    app:menu="@menu/toolbar_smart_drawer_menu"
-                    app:title="Trips"
-                    app:titleMarginStart="140dp" />
+        <ImageView
+            android:id="@+id/imageViewSmartTrip"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"
+            app:srcCompat="@drawable/travel_smart_start_trip" />
 
-            </LinearLayout>
-        </ScrollView>
     </LinearLayout>
 
 </androidx.drawerlayout.widget.DrawerLayout>

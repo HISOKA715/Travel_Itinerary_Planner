@@ -56,6 +56,8 @@ android {
 
 dependencies {
     implementation ("com.github.PhilJay:MPAndroidChart:3.1.0")
+    implementation("com.google.maps.android:android-maps-utils:3.8.2")
+    implementation ("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")

@@ -7,6 +7,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -62,6 +64,10 @@
                 android:resource="@xml/file" />
         </provider>
 
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDtnS0r7CFOE3KAK8Sz07ddFeNumRgP1tw"/>
+
         <activity
             android:name=".social.BookmarkDetailsActivity"
             android:exported="false" />
@@ -71,6 +77,17 @@
         <activity
             android:name=".chat_email.ChatActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".search.Search1Activity"
+            android:exported="false"/>
+        <activity
+            android:name=".useractivity.EditReviewActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".useractivity.FeedDetailsActivity"
+            android:exported="false"/>
+
         <activity
             android:name=".notification.NotificationDetailActivity"
             android:exported="true" />
@@ -90,6 +107,9 @@
             android:name=".tourism_attraction.AddReviewActivity"
             android:exported="false" />
         <activity
+            android:name=".useractivity.UserListActivity"
+            android:exported="false"/>
+        <activity
             android:name=".travel.TravelPlanActivity"
             android:exported="false" />
         <activity
@@ -97,6 +117,10 @@
             android:exported="false" />
         <activity
             android:name=".tourism_attraction.UserPreferActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".tourism_attraction.RecommandActivity"
             android:exported="false" />
         <activity
             android:name=".AddNewPostActivity"
@@ -120,6 +144,9 @@
             android:name=".PersonalDetailsActivity"
             android:exported="false" />
         <activity
+            android:name=".travel.MapActivity"
+            android:exported="false" />
+        <activity
             android:name=".PasswordSecurityActivity"
             android:exported="false" />
         <activity
@@ -130,6 +157,7 @@
             android:name=".BottomNavigationActivity"
             android:exported="true"
             android:label="@string/title_activity_bottom_navigation" />
+
         <activity
             android:name=".login_register_reset.ResetPasswordActivity"
             android:exported="false" />
@@ -139,6 +167,12 @@
         <activity
             android:name=".travel.LocationAddActivity"
             android:exported="false" />
+        <activity
+            android:name=".travel.LocationFindEditActivity"
+            android:exported="false"/>
+        <activity
+            android:name=".travel.LocationEditActivity"
+            android:exported="false"/>
         <activity
             android:name=".feedback.FeedbackFormActivity"
             android:exported="false" />
@@ -155,7 +189,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">

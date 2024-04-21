@@ -8,8 +8,7 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".search.SearchFragment">
+        android:layout_height="match_parent">
 
 
     <LinearLayout
@@ -142,6 +141,7 @@
                 android:textStyle="bold" />
 
             <LinearLayout
+                android:id="@+id/buttonSwtich"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">

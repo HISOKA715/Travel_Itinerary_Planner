@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.travel_itinerary_planner.databinding.FragmentDrawerBinding
+import com.example.travel_itinerary_planner.feedback.FeedbackFormActivity
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 import com.example.travel_itinerary_planner.notification.NotificationActivity
 import com.example.travel_itinerary_planner.social.BookmarksActivity
@@ -55,6 +56,10 @@ class DrawerFragment : Fragment() {
 
         binding.navigationNotificationHistory.setOnClickListener{
             val intent = Intent(requireContext(), NotificationActivity::class.java)
+            startActivity(intent)
+        }
+        binding.navigationfeedback.setOnClickListener{
+            val intent = Intent(requireContext(), FeedbackFormActivity::class.java)
             startActivity(intent)
         }
 

@@ -2,6 +2,8 @@ package com.example.travel_itinerary_planner.search
 
 import DataModel
 import MyGridAdapter
+
+import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
@@ -12,82 +14,95 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.GridView
-import android.widget.ImageButton
-import android.widget.ListView
 import com.example.travel_itinerary_planner.R
-import com.example.travel_itinerary_planner.databinding.FragmentProfileBinding
 import com.example.travel_itinerary_planner.databinding.FragmentSearchBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.example.travel_itinerary_planner.tourism_attraction.TourismActivity
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import org.json.JSONArray
+import org.json.JSONObject
+import android.content.DialogInterface
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+
+
 
 class SearchFragment : LoggedInFragment() {
-    private lateinit var viewModel: SearchViewModel
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
     private var isExpanded = false
 
-    private val collapsedItems = listOf(
-        DataModel("Sunway Velocity"),
-        DataModel("1 Utama Shopping Center"),
-        DataModel("Paradigm Mall"),
-        DataModel("Kerana Jaya"),
-        DataModel("Mid Valley"),
-        DataModel("KLCC")
-    )
 
-    private val expandedItems = collapsedItems + listOf(
-        DataModel("Pavilion"),
-        DataModel("Berjaya Times Square"),
-        DataModel("Sunway Pyramid"),
-        DataModel("IOI City Mall")
-    )
+
+
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupGridView(collapsedItems, binding.myGridView)
-        setupGridView(collapsedItems, binding.myGridView2)
+
+
+
 
         binding.myGridView2.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-            val intent = Intent(context, TourismActivity::class.java)
+            val selectedItem = binding.myGridView2.adapter.getItem(position) as DataModel1
+            val intent = Intent(context, TourismActivity::class.java).apply {
+                putExtra("documentId", selectedItem.id)
+            }
+            startActivity(intent)
+        }
+        loadSearchHistory()
+        fetchTopTourismAttractions()
+
+
+        binding.myGridView.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
+            val selectedItem = binding.myGridView.adapter.getItem(position) as DataModel
+            saveSearchQuery(selectedItem.query)
+            val intent = Intent(context, Search1Activity::class.java).apply {
+                putExtra("query", selectedItem.query)
+            }
             startActivity(intent)
         }
 
-        val data = listOf(
-            LocationData("Suria KLCC", "3.0 W"),
-            LocationData("Sunway Lagoon", "3.0 W"),
-            LocationData("1 Utama Shopping Center", "2.0 W")
-            // ... add more items
-        )
-        val adapter = TopAdapter(requireContext(), data)
-        binding.listView1.adapter = adapter
-
         binding.imageButtonSearch.setOnClickListener {
-            Log.d("SearchFragment", "Hello from ImageButtonSearch")
+            val searchQuery = binding.editTextText.text.toString()
+            if (searchQuery.isNotEmpty()) {
+                saveSearchQuery(searchQuery)
+            }
+            val intent = Intent(context, Search1Activity::class.java).apply {
+                putExtra("query",binding.editTextText.text.toString() )
+            }
+            startActivity(intent)
         }
-        var switchClickListener = View.OnClickListener {
-            Log.d("SearchFragment", "Hello from Switch Button")
+
+        binding.imageButton7.setOnClickListener {
+            showClearHistoryConfirmationDialog()
         }
 
         val expandClickListener = View.OnClickListener {
             isExpanded = !isExpanded
             binding.imageButton6.setImageResource(if (isExpanded) R.drawable.baseline_arrow_drop_up_24 else R.drawable.baseline_arrow_drop_down_24)
             if (isExpanded) {
-                setupGridView(expandedItems, binding.myGridView) // Adjust for expanded state
-                adjustGridViewHeight(binding.myGridView, true) // Make sure to update adjustGridViewHeight method accordingly
+                adjustGridViewHeight(binding.myGridView, true)
             } else {
-                setupGridView(collapsedItems, binding.myGridView) // Adjust back for collapsed state
-                adjustGridViewHeight(binding.myGridView, false) // Update this method accordingly
+                adjustGridViewHeight(binding.myGridView, false)
             }
+            loadSearchHistory()
         }
-
+        fetchUserPreferencesAndRecommendations()
+        binding.textView1.setOnClickListener {
+            fetchUserPreferencesAndRecommendations()
+        }
+        binding.imageButton1.setOnClickListener{
+            fetchUserPreferencesAndRecommendations()
+        }
         binding.textView7.setOnClickListener(expandClickListener)
         binding.imageButton6.setOnClickListener(expandClickListener)
-        binding.textView1.setOnClickListener(switchClickListener)
-        binding.imageButton1.setOnClickListener(switchClickListener)
     }
 
 
@@ -96,7 +111,10 @@ class SearchFragment : LoggedInFragment() {
         gridView.adapter = adapter
     }
 
-
+    private fun setupGridView1(items: List<DataModel1>, gridView: GridView) {
+        val adapter1 = MyGridAdapter1(requireContext(), R.layout.grid_item, items)
+        gridView.adapter = adapter1
+    }
 
     private fun adjustGridViewHeight(gridView: GridView, isExpanded: Boolean) {
         val heightInPixels = if (isExpanded) dpToPx(250) else dpToPx(155)
@@ -104,6 +122,53 @@ class SearchFragment : LoggedInFragment() {
         params.height = heightInPixels
         gridView.layoutParams = params
     }
+
+    fun fetchTopTourismAttractions() {
+        val db = FirebaseFirestore.getInstance()
+        db.collection("Tourism Attractions")
+            .orderBy("clickRate", Query.Direction.DESCENDING)
+            .limit(3)
+            .get()
+            .addOnSuccessListener { documents ->
+                val attractions = documents.map { document ->
+                    LocationData(
+                        id = document.id,
+                        name = document.getString("TourismName") ?: "",
+                        clickRate = document.getLong("clickRate") ?: 0
+                    )
+                }
+                updateTopAttractionsList(attractions)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("TourismActivity", "Error fetching top tourism attractions: ", exception)
+            }
+    }
+
+    private fun showClearHistoryConfirmationDialog() {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Clear History")
+            .setMessage("Are you sure you want to clear the search history?")
+            .setPositiveButton("Yes") { dialog, which ->
+                clearSearchHistory()
+                Toast.makeText(requireContext(), "Search history cleared.", Toast.LENGTH_SHORT).show()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun updateTopAttractionsList(attractions: List<LocationData>) {
+        val adapter = TopAdapter(requireContext(), attractions)
+        binding.listView1.adapter = adapter
+        binding.listView1.setOnItemClickListener { _, _, position, _ ->
+            val selectedItem = adapter.getItem(position) as LocationData
+            val intent = Intent(context, TourismActivity::class.java).apply {
+                putExtra("documentId", selectedItem.id)
+            }
+            startActivity(intent)
+        }
+    }
+
+
 
     private fun dpToPx(dp: Int): Int {
 
@@ -115,5 +180,135 @@ class SearchFragment : LoggedInFragment() {
         _binding = null
     }
 
+    fun fetchUserPreferencesAndRecommendations() {
+        val currentUser = FirebaseAuth.getInstance().currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            val db = FirebaseFirestore.getInstance()
 
+            db.collection("users").document(userId).get().addOnSuccessListener { document ->
+                val preferAttraction = document.getDouble("PreferAttraction") ?: 0.0
+                val preferRestaurant = document.getDouble("PreferRestaurant") ?: 0.0
+                val preferShopping = document.getDouble("PreferShopping") ?: 0.0
+                val preferOther = document.getDouble("PreferOther") ?: 0.0
+                val totalPreference = preferAttraction + preferRestaurant + preferShopping + preferOther
+
+                val preferencesMap = mapOf(
+                    "Tourism Attraction" to (preferAttraction / totalPreference * 100),
+                    "Restaurant" to (preferRestaurant / totalPreference * 100),
+                    "Shopping" to (preferShopping / totalPreference * 100),
+                    "Unknown" to (preferOther / totalPreference * 100)
+                )
+
+                fetchTourismAttractionsBasedOnSortedPreferences(preferencesMap)
+            }.addOnFailureListener { exception ->
+                Log.d("Firestore", "Error getting user preferences: ", exception)
+            }
+        } else {
+            Log.d("FirebaseAuth", "No authenticated user found.")
+        }
+    }
+
+    private fun saveSearchQuery(query: String) {
+        val sharedPreferences = requireActivity().getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
+        val historyJson = sharedPreferences.getString("history", "[]")
+        val historyArray = JSONArray(historyJson)
+        var queryExists = false
+
+        for (i in 0 until historyArray.length()) {
+            val item = historyArray.getJSONObject(i)
+            if (item.getString("query") == query) {
+                item.put("timestamp", System.currentTimeMillis())
+                queryExists = true
+                break
+            }
+        }
+
+        if (!queryExists) {
+            val newEntry = JSONObject().apply {
+                put("query", query)
+                put("timestamp", System.currentTimeMillis())
+            }
+            historyArray.put(newEntry)
+        } else {
+
+            val sortedJsonArray = JSONArray()
+            val list = mutableListOf<JSONObject>()
+            for (i in 0 until historyArray.length()) {
+                list.add(historyArray.getJSONObject(i))
+            }
+            list.sortByDescending { it.getLong("timestamp") }
+            list.forEach { sortedJsonArray.put(it) }
+
+            sharedPreferences.edit().putString("history", sortedJsonArray.toString()).apply()
+            loadSearchHistory()
+            return
+        }
+
+
+        sharedPreferences.edit().putString("history", historyArray.toString()).apply()
+        loadSearchHistory()
+    }
+
+
+
+    private fun loadSearchHistory() {
+        val sharedPreferences = requireActivity().getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
+        val historyJson = sharedPreferences.getString("history", "[]")
+        val historyArray = JSONArray(historyJson)
+        val historyList = mutableListOf<DataModel>()
+
+        for (i in 0 until historyArray.length()) {
+            val item = historyArray.getJSONObject(i)
+            val query = item.getString("query")
+            val timestamp = item.getLong("timestamp")
+            historyList.add(DataModel(query, timestamp))
+        }
+
+        // Sorting based on timestamp, showing the latest first
+        val sortedHistory = if (isExpanded) historyList.sortedByDescending { it.timestamp }.take(10)
+        else historyList.sortedByDescending { it.timestamp }.take(6)
+
+
+        setupGridView(sortedHistory, binding.myGridView)
+    }
+
+
+    private fun clearSearchHistory() {
+        val sharedPreferences = requireActivity().getSharedPreferences("SearchHistory", Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove("history").apply()
+        loadSearchHistory()
+    }
+
+    fun fetchTourismAttractionsBasedOnSortedPreferences(preferences: Map<String, Double>) {
+        val db = FirebaseFirestore.getInstance()
+        val fetchCountPerCategory = 20L
+        val recommendations = mutableListOf<DataModel1>()
+        val categoriesProcessed = mutableSetOf<String>()
+
+        preferences.keys.forEach { category ->
+            db.collection("Tourism Attractions")
+                .whereEqualTo("TourismCategory", category)
+                .limit(fetchCountPerCategory)
+                .get()
+                .addOnSuccessListener { documents ->
+                    val categoryRecommendations = documents.map { document ->
+                        DataModel1(
+                            id = document.id,
+                            primaryText = document.getString("TourismName") ?: "",
+                        )
+                    }.shuffled().take((preferences[category]!! / 100 * 10).toInt())
+
+                    recommendations.addAll(categoryRecommendations)
+                    categoriesProcessed.add(category)
+
+
+                    if (categoriesProcessed.size == preferences.size) {
+                        setupGridView1(recommendations.shuffled().take(6), binding.myGridView2)
+                    }
+                }.addOnFailureListener { exception ->
+                    Log.d("Firestore", "Error fetching tourism attractions based on preferences: ", exception)
+                }
+        }
+    }
 }

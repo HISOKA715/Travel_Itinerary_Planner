@@ -2,53 +2,47 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-   >
-
+    tools:context=".feedback.FeedbackFormActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        tools:context=".FeedbackFormActivity">
-
+        android:orientation="vertical">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
             android:layout_weight="1">
-
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal">
-
                 <ImageButton
                     android:id="@+id/imageButton3"
                     android:layout_width="58dp"
                     android:layout_height="match_parent"
                     android:background="@android:color/transparent"
                     app:srcCompat="@drawable/baseline_arrow_back_24" />
-
                 <TextView
                     android:id="@+id/textView18"
-                    android:layout_width="208dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="30dp"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_gravity="center"
                     android:text="Feedback"
-                    android:textSize="25dp"
-                    android:textStyle="bold" />
+                    android:textSize="20dp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
             </LinearLayout>
-
             <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Feedback Category"
-                android:textStyle="bold" />
-
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
             <Spinner
                 android:id="@+id/feedback_cate"
                 android:layout_width="match_parent"
@@ -56,15 +50,14 @@
                 android:entries="@array/feedback_category"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"/>
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Feedback Location"
-                android:textStyle="bold" />
-
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
             <Spinner
                 android:id="@+id/feedback_location"
                 android:layout_width="match_parent"
@@ -79,7 +72,8 @@
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Feedback Description"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
             <EditText
                 android:id="@+id/travelNameEditText"
@@ -87,15 +81,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:hint="Fill in your Feedback Description" />
+                android:hint="Fill in your Feedback Description"
+                android:textColor="@color/black"/>
 
             <TextView
+                android:id="@+id/textshow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="10dp"
                 android:text="Feedback Accurary"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                android:textColor="@color/black"/>
 
             <Spinner
                 android:id="@+id/feedback_accurate"
@@ -115,11 +112,9 @@
             android:layout_marginStart="10dp"
             android:layout_marginBottom="10dp"
             android:layout_marginEnd="10dp"
-            android:textSize="20dp"
+            android:textSize="16dp"
             android:textColor="@color/white"
             android:padding="12dp"
             android:gravity="center" />
     </LinearLayout>
-
-
 </layout>

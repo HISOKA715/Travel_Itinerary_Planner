@@ -2,23 +2,18 @@ package com.example.travel_itinerary_planner
 
 import android.content.Intent
 import android.os.Bundle
-import com.example.travel_itinerary_planner.databinding.ActivityMainBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 import com.example.travel_itinerary_planner.notification.NotificationDetailActivity
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : LoggedInActivity() {
 
-    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        setContentView(binding.root)
         checkIntent(intent)
-        binding.startBtn.setOnClickListener {
-            val intent = Intent(this, LoginActivity::class.java)
-            startActivity(intent)
-        }
+
     }
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -49,4 +44,18 @@ class MainActivity : LoggedInActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+
+        if (FirebaseAuth.getInstance().currentUser != null) {
+            setupHomeFragment()
+        }
+
+
+    }
+    private fun setupHomeFragment() {
+        val intent = Intent(this, BottomNavigationActivity::class.java)
+        intent.putExtra("returnToHomeFragment", true)
+        startActivity(intent)
+    }
 }

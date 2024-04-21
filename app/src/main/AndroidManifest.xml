@@ -30,6 +30,9 @@
             android:name=".smart_budget.SmartEditExpensesActivity"
             android:exported="false" />
         <activity
+            android:name=".StartActivity"
+            android:exported="false" />
+        <activity
             android:name=".smart_budget.SmartExpensesActivity"
             android:exported="false" />
         <activity

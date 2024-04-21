@@ -1,10 +1,9 @@
 package com.example.travel_itinerary_planner.logged_in
 
+import com.example.travel_itinerary_planner.StartActivity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
-import com.example.travel_itinerary_planner.notification.NotificationDetailActivity
 import com.google.firebase.auth.FirebaseAuth
 
 
@@ -20,11 +19,15 @@ open class LoggedInActivity : AppCompatActivity() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            val intent = Intent(this, LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            finish()
+            redirectToStart()
         }
+    }
+
+    protected open fun redirectToStart() {
+        val intent = Intent(this, StartActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        finish()
     }
 
 

@@ -55,6 +55,7 @@ android {
 
 
 dependencies {
+    implementation ("com.github.PhilJay:MPAndroidChart:3.1.0")
     implementation("com.google.maps.android:android-maps-utils:3.8.2")
     implementation ("com.google.android.gms:play-services-location:21.2.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")

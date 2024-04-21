@@ -1,6 +1,7 @@
 package com.example.travel_itinerary_planner.useractivity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
@@ -16,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.databinding.EditReviewBinding
+import com.example.travel_itinerary_planner.home.HomeFragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
@@ -58,6 +60,9 @@ class EditReviewActivity:LoggedInActivity() {
         }
         binding.addcamera.setOnClickListener {
             openCamera()
+        }
+        binding.deleterecord.setOnClickListener {
+            showDeleteConfirmationDialog()
         }
     }
     private fun openCamera() {
@@ -120,6 +125,43 @@ class EditReviewActivity:LoggedInActivity() {
                 submitReview()
             }
         }
+    }
+
+    private fun showDeleteConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Review")
+            .setMessage("Are you sure you want to delete this review?")
+            .setPositiveButton("Yes") { dialog, which ->
+                deleteReview()
+            }
+            .setNegativeButton("No") { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+    private fun deleteReview() {
+        val documentId = intent.getStringExtra("documentId")
+        val rateId = intent.getStringExtra("REVIEW_ID")
+        if (documentId != null && rateId != null) {
+            firestore.collection("Tourism Attractions").document(documentId)
+                .collection("Review").document(rateId).delete()
+                .addOnSuccessListener {
+                    Toast.makeText(this, "Review deleted successfully", Toast.LENGTH_SHORT).show()
+                    navigateToHome()
+                }
+                .addOnFailureListener { e ->
+                    Log.e("EditReviewActivity", "Error deleting review", e)
+                    Toast.makeText(this, "Failed to delete review", Toast.LENGTH_SHORT).show()
+                }
+        } else {
+            Toast.makeText(this, "Error: Document ID or Review ID is missing", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun navigateToHome() {
+        val intent = Intent(this, HomeFragment::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        startActivity(intent)
     }
 
     private fun submitReview() {
@@ -220,6 +262,7 @@ class EditReviewActivity:LoggedInActivity() {
                 Log.e("EditReviewActivity", "Error fetching review details", e)
             }
     }
+
 
     private fun validateInput(): Boolean {
         val rating = binding.ratingBar.rating

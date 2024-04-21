@@ -65,10 +65,11 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="feedback_category">
+        <item>Please select a category</item>
         <item>Recommendation</item>
-        <item>Option 2</item>
+        <item>System Feedback</item>
     </string-array>
-<string-array name="search_location" >
+<string-array name="search_location">
     <item>All</item>
     <item>Kuala Lumpur</item>
     <item>Selangor</item>
@@ -88,6 +89,7 @@
 
 
     <string-array name="feedback_location">
+        <item>Please select a location</item>
         <item>Kuala Lumpur</item>
         <item>Selangor</item>
         <item>Johor</item>
@@ -123,6 +125,7 @@
     </string-array>
 
     <string-array name="feedback_accurate">
+        <item>Please select a Accurate</item>
         <item>Accurate</item>
         <item>Not Accurate</item>
     </string-array>

@@ -83,9 +83,17 @@ class FeedbackFragment: LoggedInFragment() {
     }
 
     private fun updateFeedbackList(feedbackItems: List<FeedbackItem>) {
-        adapter = FeedbackAdapter(requireContext(), feedbackItems)
+        val sortedItems = feedbackItems.sortedByDescending {
+            SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).parse(it.date)
+        }
+
+        adapter = FeedbackAdapter(requireContext(), sortedItems)
         binding.listView.adapter = adapter
 
+        setupItemClickListener()
+    }
+
+    private fun setupItemClickListener() {
         binding.listView.setOnItemClickListener { _, _, position, _ ->
             val clickedFeedbackId = adapter.getItem(position)?.id
             val intent = Intent(requireContext(), FeedDetailsActivity::class.java).apply {

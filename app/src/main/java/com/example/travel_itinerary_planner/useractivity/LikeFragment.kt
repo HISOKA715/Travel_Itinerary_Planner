@@ -43,30 +43,26 @@ class LikeFragment : LoggedInFragment() {
         val userId = auth.currentUser?.uid ?: return
         firestore.collection("Tourism Attractions").get().addOnSuccessListener { documents ->
             val likedAttractions = mutableListOf<ImageItem>()
-            var processedDocuments = 0
 
-            if (documents.isEmpty) {
-                updateUI(likedAttractions)
-            } else {
-                documents.forEach { document ->
-                    document.reference.collection("like").document(userId).get().addOnSuccessListener { likeDoc ->
-                        processedDocuments++
-                        if (likeDoc.exists()) {
+            documents.forEach { document ->
+                document.reference.collection("like").document(userId)
+                    .addSnapshotListener { snapshot, e ->
+                        if (e != null) {
+                            Log.w("LikeFragment", "Listen failed.", e)
+                            return@addSnapshotListener
+                        }
+
+                        if (snapshot != null && snapshot.exists()) {
                             val imageUrl = document.getString("TourismImage") ?: ""
-                            likedAttractions.add(ImageItem(document.id, imageUrl))
+                            val imageItem = ImageItem(document.id, imageUrl)
+                            if (!likedAttractions.contains(imageItem)) {
+                                likedAttractions.add(imageItem)
+                            }
+                        } else {
+                            likedAttractions.removeAll { it.attractionId == document.id }
                         }
-                        if (processedDocuments == documents.size()) {
-                            updateUI(likedAttractions)
-                        }
-                    }.addOnFailureListener { exception ->
-                        processedDocuments++
-                        Log.w("LikeFragment", "Error getting likes: ", exception)
-                        Log.w("like", "$processedDocuments")
-                        if (processedDocuments == documents.size()) {
-                            updateUI(likedAttractions)
-                        }
+                        updateUI(likedAttractions)
                     }
-                }
             }
         }
     }

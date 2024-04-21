@@ -20,7 +20,6 @@ data class FeedbackDetail(
 )
 class FeedDetailsActivity : LoggedInActivity() {
     private lateinit var binding: FeedbackDetailsBinding
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = FeedbackDetailsBinding.inflate(layoutInflater)
@@ -86,7 +85,6 @@ class FeedDetailsActivity : LoggedInActivity() {
                 Log.e("FeedDetailsActivity", "Error fetching replies: ", exception)
             }
     }
-
     private fun updateUIWithReply(replyDate: Date, replyDesc: String) {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         binding.reply.text = replyDesc

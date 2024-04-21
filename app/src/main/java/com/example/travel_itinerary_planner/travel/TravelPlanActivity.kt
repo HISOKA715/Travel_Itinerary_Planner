@@ -296,21 +296,20 @@ class TravelPlanActivity : LoggedInActivity(), LocationAdapter.OnLocationItemCli
     private fun fetchLocations(travelPlanDocId: String, locationDateDocId: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid ?: return
         FirebaseFirestore.getInstance()
-            .collection("users/$userId/Travel_Plan/$travelPlanDocId/LocationDate/$locationDateDocId/Location").
-            orderBy("LocationTime")
-            .get()
-            .addOnSuccessListener { snapshot ->
+            .collection("users/$userId/Travel_Plan/$travelPlanDocId/LocationDate/$locationDateDocId/Location")
+            .orderBy("LocationTime")
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("TravelPlanActivity", "Error fetching locations: ", e)
+                    return@addSnapshotListener
+                }
                 locationItems.clear()
-                for (document in snapshot.documents) {
+                snapshot?.documents?.forEach { document ->
                     val name = document.getString("LocationName") ?: "N/A"
                     val address = document.getString("LocationAddress") ?: "N/A"
                     val status = document.getString("LocationStatus") ?: "N/A"
-
-                    val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault()).apply {
-                        timeZone = TimeZone.getTimeZone("Asia/Kuala_Lumpur")
-                    }
-                    val time = document.getTimestamp("LocationTime")?.toDate()?.let { sdf.format(it) } ?: "N/A"
-                    locationItems.add(LocationItem(document.id,time, name, status, address))
+                    val time = document.getTimestamp("LocationTime")?.toDate()?.let { SimpleDateFormat("hh:mm a", Locale.getDefault()).format(it) } ?: "N/A"
+                    locationItems.add(LocationItem(document.id, time, name, status, address))
                 }
                 locationAdapter.notifyDataSetChanged()
             }

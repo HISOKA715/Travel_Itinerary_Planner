@@ -1,0 +1,251 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarCategory"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:navigationIcon="@drawable/baseline_arrow_back_24"
+        app:title="Pick Category"
+        app:titleMarginStart="80dp"/>
+
+    <TextView
+        android:id="@+id/textView28"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginRight="10dp"
+        android:fontFamily="@font/roboto"
+        android:text="Expenses Category"
+        android:textColor="@color/black"
+        android:textSize="23sp"
+        android:textStyle="normal" />
+
+    <GridLayout
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="20dp"
+        android:background="#FFFFFF"
+        android:columnCount="3"
+        android:orientation="horizontal"
+        android:rowCount="6"
+        android:layout_margin="10dp">
+
+        <Button
+            android:id="@+id/btnTransportation"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_directions_transit_24"
+            android:drawableTint="#FF5722"
+            android:text="Transportation"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnRestaurants"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+
+            android:drawableTop="@drawable/baseline_restaurant_menu_24"
+            android:drawableTint="#FF9800"
+            android:text="Restaurants"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnAccommodation"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_single_bed_24"
+            android:drawableTint="#FFC107"
+            android:text="Accommodation"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnGroceries"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_local_grocery_store_24"
+            android:drawableTint="#FFEB3B"
+            android:text="Groceries"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnShopping"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_shopping_bag_24"
+            android:drawableTint="#CDDC39"
+            android:text="Shopping"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnActivities"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_kayaking_24"
+            android:drawableTint="#4CAF50"
+            android:text="Activities"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnDrinks"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_wine_bar_24"
+            android:drawableTint="#009688"
+            android:text="Drinks"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnCoffee"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_coffee_24"
+            android:drawableTint="#00BCD4"
+            android:text="Coffee"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnFlights"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_flight_24"
+            android:drawableTint="#03A9F4"
+            android:text="Flights"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+
+        <Button
+            android:id="@+id/btnFeesAndCharges"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_monetization_on_24"
+            android:drawableTint="#2196F3"
+
+            android:text="Fees &amp; Charges"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnSightseeing"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_museum_24"
+            android:drawableTint="#3F51B5"
+
+            android:text="Sightseeing"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnEntertainment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_movie_24"
+            android:drawableTint="#673AB7"
+
+            android:text="Entertainment"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnLaundry"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_local_laundry_service_24"
+            android:drawableTint="#9C27B0"
+
+            android:text="Laundry"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnExchangeFees"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_currency_exchange_24"
+            android:drawableTint="#E91E63"
+            android:text="Exchange Fees"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+        <Button
+            android:id="@+id/btnOthers"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:background="@drawable/rectangle_button"
+            android:drawableTop="@drawable/baseline_other_houses_24"
+            android:drawableTint="#F44336"
+
+            android:text="Others"
+            android:textColor="@color/dark_blue"
+            android:textSize="11sp" />
+
+
+    </GridLayout>
+
+</LinearLayout>

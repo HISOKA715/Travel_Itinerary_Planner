@@ -3,6 +3,7 @@ package com.example.travel_itinerary_planner.logged_in
 import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import com.example.travel_itinerary_planner.StartActivity
 import com.example.travel_itinerary_planner.login_register_reset.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -19,10 +20,16 @@ open class LoggedInFragment : Fragment() {
         super.onStart()
         val currentUser = auth.currentUser
         if (currentUser == null) {
-            val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
-            startActivity(intent)
-            requireActivity().finish()
+            redirectToStart()
         }
     }
+
+    protected open fun redirectToStart() {
+        val intent = Intent(requireContext(), StartActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        requireActivity().finish()
+    }
+
+
 }

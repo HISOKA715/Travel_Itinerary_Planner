@@ -3,13 +3,13 @@ package com.example.travel_itinerary_planner.home
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
-import androidx.fragment.app.Fragment
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.travel_itinerary_planner.BottomNavigationActivity
@@ -17,7 +17,7 @@ import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentHomeBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.example.travel_itinerary_planner.notification.NotificationActivity
-import com.example.travel_itinerary_planner.notification.NotificationDetailActivity
+import com.example.travel_itinerary_planner.smart_budget.SmartBudgetDetails
 import com.example.travel_itinerary_planner.tourism_attraction.RecommandActivity
 import com.example.travel_itinerary_planner.useractivity.UserListActivity
 import com.github.mikephil.charting.animation.Easing
@@ -29,16 +29,23 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.github.mikephil.charting.formatter.LargeValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import java.text.DateFormatSymbols
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class HomeFragment : LoggedInFragment() {
 
     private lateinit var binding: FragmentHomeBinding
     private lateinit var firestore: FirebaseFirestore
-
     private var attractions: MutableList<TourismAttraction> = mutableListOf()
+
 
 
     override fun onCreateView(
@@ -288,13 +295,27 @@ class HomeFragment : LoggedInFragment() {
             "ZMW - Zambian Kwacha",
             "ZWL - Zimbabwean Dollar"
         )
+        val currencyCodes = currencyOptions.map { it.substring(0, 3) }.toTypedArray()
         val currencyAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, currencyOptions)
         currencyAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         binding.currencySpinner.adapter = currencyAdapter
 
         binding.yearSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                fetchDataForYearAndCurrency(parent?.getItemAtPosition(position).toString(), binding.currencySpinner.selectedItem.toString())
+                parent?.let {
+                    val selectedYear = parent.getItemAtPosition(position)?.toString()
+                    val selectedCurrency = binding.currencySpinner.selectedItem?.toString()?.substring(0, 3)
+                    if (selectedYear != null && selectedCurrency != null ) {
+
+                            retrieveBarChart(selectedYear, selectedCurrency)
+
+                    }
+
+                    val currencyPosition = currencyOptions.indexOf(selectedYear)
+                    if (currencyPosition != -1) {
+                        binding.currencySpinner.setSelection(currencyPosition)
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -302,83 +323,231 @@ class HomeFragment : LoggedInFragment() {
         }
 
         binding.currencySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                fetchDataForYearAndCurrency(binding.currencySpinner.selectedItem.toString(), parent?.getItemAtPosition(position).toString())
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                val selectedCurrency =
+                    currencyCodes.getOrNull(position)
+                val selectedCurrencyOption = currencyOptions.getOrNull(position)
+                val selectedYear = binding.yearSpinner.selectedItem?.toString()
+                if (selectedYear != null && selectedCurrency != null) {
+                    retrieveBarChart(selectedYear, selectedCurrency)
+                }
+
+                selectedCurrencyOption?.let {
+                    binding.currencySpinner.setSelection(position)
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
+
+
         }
+
     }
-    private fun fetchDataForYearAndCurrency(selectedYear: String, selectedCurrency: String) {
 
-        for (i in 1..12) {
-            val month = String.format("%02d", i)
-            val startDate = "$selectedYear-$month-01"
-            val endDate = "$selectedYear-$month-31"
+    private fun retrieveBarChart(selectedYear:String,selectedCurrency:String) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-            firestore.collection("SmartBudgetDetails")
-                .whereGreaterThanOrEqualTo("ExpensesDate", startDate)
-                .whereLessThanOrEqualTo("ExpensesDate", endDate)
-                .get()
-                .addOnSuccessListener { querySnapshot ->
-                    var totalExpenses = 0.0
-                    querySnapshot.documents.forEach { document ->
-                        val amountStr = document.getString("ConvertedAmount")
-                        val currency = document.getString("ConvertedCurrency")
-                        if (amountStr != null && currency != null) {
-                            val amount = amountStr.toDoubleOrNull()
-                            if (amount != null && currency == selectedCurrency) {
-                                totalExpenses += amount
+        val startOfYear = "$selectedYear-01-01"
+        val endOfYear = "$selectedYear-12-31"
+
+        firestore.collection("SmartBudget")
+            .whereEqualTo("UserID", userId)
+            .get()
+            .addOnSuccessListener { smartBudgetQuerySnapshot ->
+                val budgetIds = mutableSetOf<String>()
+                smartBudgetQuerySnapshot.documents.forEach { budgetDoc ->
+                    val budgetId = budgetDoc.id
+                    val tripStartDate = budgetDoc.getString("TripStartDate")
+                    val tripEndDate = budgetDoc.getString("TripEndDate")
+
+                    if (tripStartDate != null && tripEndDate != null) {
+                        if (tripStartDate >= startOfYear && tripEndDate <= endOfYear) {
+                            budgetIds.add(budgetId)
+                        }
+                    }
+                }
+
+                searchConvertedAmount(budgetIds.toList(),selectedYear,selectedCurrency)
+
+
+            }
+            .addOnFailureListener { exception ->
+            }
+    }
+
+
+    private fun searchConvertedAmount(budgetIds: List<String>,selectedYear: String,selectedCurrency: String) {
+        fun hasNonZeroAmount(monthName: String, amounts: Map<String, Double>): Boolean {
+            return amounts.containsKey(monthName) && amounts[monthName] != 0.0
+        }
+        val exchangeRates = mapOf(
+            "AED" to 0.27, "AFN" to 0.014, "ALL" to 0.011, "AMD" to 0.0026, "ANG" to 0.56,
+            "AOA" to 0.0012, "ARS" to 0.0011, "AUD" to 0.64, "AWG" to 0.55, "AZN" to 0.59,
+            "BAM" to 0.55, "BBD" to 0.5, "BDT" to 0.0091, "BGN" to 0.54, "BHD" to 2.65,
+            "BIF" to 0.00035, "BMD" to 1.0, "BND" to 0.74, "BOB" to 0.14, "BRL" to 0.19,
+            "BSD" to 1.0, "BTN" to 0.012, "BWP" to 0.072, "BYN" to 0.31, "BZD" to 0.5,
+            "CAD" to 0.73, "CDF" to 0.00036, "CHF" to 1.1, "CLP" to 0.001, "CNY" to 0.14,
+            "COP" to 0.00026, "CRC" to 0.002, "CUP" to 0.042, "CVE" to 0.0096, "CZK" to 0.042,
+            "DJF" to 0.0056, "DKK" to 0.14, "DOP" to 0.017, "DZD" to 0.0074, "EGP" to 0.021,
+            "ERN" to 0.067, "ETB" to 0.018, "EUR" to 1.06, "FJD" to 0.44, "FKP" to 1.25,
+            "FOK" to 0.14, "GBP" to 1.24, "GEL" to 0.38, "GGP" to 1.24, "GHS" to 0.07,
+            "GIP" to 1.24, "GMD" to 0.02, "GNF" to 0.0001, "GTQ" to 0.13, "GYD" to 0.005,
+            "HKD" to 0.13, "HNL" to 0.04, "HRK" to 0.14, "HTG" to 0.008, "HUF" to 0.003,
+            "IDR" to 0.00006, "ILS" to 0.26, "IMP" to 1.24, "INR" to 0.01, "IQD" to 0.0008,
+            "IRR" to 0.00002, "ISK" to 0.007, "JEP" to 1.25, "JMD" to 0.006, "JOD" to 1.41,
+            "JPY" to 0.007, "KES" to 0.008, "KGS" to 0.01, "KHR" to 0.0003, "KID" to 0.66,
+            "KMF" to 0.002, "KPW" to 0.001, "KRW" to 0.0007, "KWD" to 3.24, "KYD" to 1.2,
+            "KZT" to 0.002, "LAK" to 0.00005, "LBP" to 0.00001, "LKR" to 0.003, "LRD" to 0.005,
+            "LSL" to 0.05, "LYD" to 0.2, "MAD" to 0.098, "MDL" to 0.06, "MGA" to 0.0002,
+            "MKD" to 0.02, "MMK" to 0.0005, "MNT" to 0.0003, "MOP" to 0.12, "MRU" to 0.025,
+            "MUR" to 0.021, "MVR" to 0.065, "MWK" to 0.00057, "MXN" to 0.058, "MYR" to 0.20905,
+            "MZN" to 0.016, "NAD" to 0.052, "NGN" to 0.0009, "NIO" to 0.027, "NOK" to 0.091,
+            "NPR" to 0.0075, "NZD" to 0.59, "OMR" to 2.6, "PAB" to 1.0, "PEN" to 0.27,
+            "PGK" to 0.26, "PHP" to 0.017, "PKR" to 0.0036, "PLN" to 0.25, "PYG" to 0.00013,
+            "QAR" to 0.27, "RON" to 0.21, "RSD" to 0.0091, "RUB" to 0.011, "RWF" to 0.00077,
+            "SAR" to 0.27, "SBD" to 0.12, "SCR" to 0.07, "SDG" to 0.0017, "SEK" to 0.091,
+            "SGD" to 0.73, "SHP" to 1.24, "SLL" to 0.000051, "SOS" to 0.0018, "SRD" to 0.029,
+            "STN" to 0.043429473, "SYP" to 0.000076912101, "SZL" to 0.052, "THB" to 0.027,
+            "TJS" to 0.091, "TMT" to 0.29, "TND" to 0.32, "TOP" to 0.4213, "TRY" to 0.031,
+            "TTD" to 0.15, "TVD" to 0.64214269, "TWD" to 0.031, "TZS" to 0.00039, "UAH" to 0.025,
+            "UGX" to 0.00026, "USD" to 1.0, "UYU" to 0.026, "UZS" to 0.000078, "VES" to 0.027554463,
+            "VND" to 0.000039, "VUV" to 0.0081621725, "WST" to 0.3598, "XAF" to 0.0016, "XCD" to 0.37,
+            "XDR" to 1.3153172, "XOF" to 0.0016, "XPF" to 0.0089, "YER" to 0.004, "ZAR" to 0.052,
+            "ZMW" to 0.039, "ZWL" to 0.003106
+        )
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+        val collectionRef = firestore.collection("SmartBudgetDetails")
+
+        val totalConvertedAmounts = mutableMapOf<String, Double>()
+
+        for (month in 1..12) {
+            val monthStartDate = Calendar.getInstance().apply {
+                set(Calendar.YEAR, selectedYear.toInt())
+                set(Calendar.MONTH, month - 1)
+                set(Calendar.DAY_OF_MONTH, 1)
+                set(Calendar.HOUR_OF_DAY, 0)
+                set(Calendar.MINUTE, 0)
+                set(Calendar.SECOND, 0)
+                set(Calendar.MILLISECOND, 0)
+            }.time
+
+            val monthEndDate = Calendar.getInstance().apply {
+                set(Calendar.YEAR, selectedYear.toInt())
+                set(Calendar.MONTH, month - 1)
+                set(Calendar.DAY_OF_MONTH, getActualMaximum(Calendar.DAY_OF_MONTH))
+                set(Calendar.HOUR_OF_DAY, 23)
+                set(Calendar.MINUTE, 59)
+                set(Calendar.SECOND, 59)
+                set(Calendar.MILLISECOND, 999)
+            }.time
+
+            val convertedAmounts = mutableListOf<Double>()
+
+            for (budgetId in budgetIds) {
+                collectionRef.whereEqualTo("BudgetID", budgetId).get()
+                    .addOnSuccessListener { querySnapshot ->
+                        for (documentSnapshot in querySnapshot.documents) {
+                            val expensesDate = documentSnapshot.getString("ExpensesDate")
+                            if (expensesDate != null) {
+                                val expensesDateParsed = dateFormat.parse(expensesDate)
+                                if (expensesDateParsed in monthStartDate..monthEndDate) {
+                                    val convertedAmount = documentSnapshot.getString("ConvertedAmount")?.toDouble() ?: 0.0
+                                    val convertedCurrency = documentSnapshot.getString("ConvertedCurrency") ?: "USD"
+                                    val expensesToUsdExchangeRate = exchangeRates[convertedCurrency] ?: 1.0
+                                    val amountInUSD = convertedAmount * expensesToUsdExchangeRate
+                                    val usdToSelectedExchangeRate = exchangeRates[selectedCurrency] ?: 1.0
+                                    val finalConvertedAmount = amountInUSD / usdToSelectedExchangeRate
+                                    convertedAmounts.add(finalConvertedAmount)
+                                }
+                            }
+                        }
+                        val totalConvertedAmountForMonth = convertedAmounts.sum()
+                        val formattedTotalConvertedAmountForMonth = String.format("%.2f", totalConvertedAmountForMonth)
+                        val monthName = DateFormatSymbols().months[month - 1]
+                        totalConvertedAmounts["Total Converted Amount for $monthName"] = formattedTotalConvertedAmountForMonth.toDouble()
+                        Log.d("FirestoreQuery", "Total Converted Amount for $monthName: $formattedTotalConvertedAmountForMonth")
+
+                        if (totalConvertedAmounts.size == 12) {
+
+                            val nonZeroAmounts = totalConvertedAmounts.filter {
+                                hasNonZeroAmount(
+                                    it.key,
+                                    totalConvertedAmounts
+                                )
+                            }
+                            if (nonZeroAmounts.isNotEmpty()) {
+                                setupBarChart(
+                                    nonZeroAmounts.keys.map { it.substringAfterLast(" ") },
+                                    nonZeroAmounts.values.toList()
+                                )
+                            } else {
+
                             }
                         }
                     }
-
-
-                    displayMonthlyExpenses(selectedYear,month, totalExpenses)
-                }
-                .addOnFailureListener { exception ->
-                }
+                    .addOnFailureListener { exception ->
+                        Log.e("FirestoreQuery", "Error getting documents for Budget ID: $budgetId", exception)
+                    }
+            }
         }
+
+
+
     }
-    private fun displayMonthlyExpenses(selectedYear: String, month: String, expenses: Double) {
-        val barEntries = mutableListOf<BarEntry>()
 
-        barEntries.add(BarEntry(month.toFloat(), expenses.toFloat()))
 
-        val barDataSet = BarDataSet(barEntries, "Monthly Expenses")
-        barDataSet.color = Color.parseColor("#2979FF")
+        private fun setupBarChart(months: List<String>, amounts: List<Double>) {
+        val entries = mutableListOf<BarEntry>()
 
-        val barData = BarData(barDataSet)
+        for (i in months.indices) {
+            entries.add(BarEntry(i.toFloat(), amounts[i].toFloat()))
+        }
+
+        val dataSet = BarDataSet(entries, "")
+
+        dataSet.color = resources.getColor(R.color.blue)
+        dataSet.valueTextSize = 16f
+        dataSet.valueFormatter = object : ValueFormatter() {
+            override fun getFormattedValue(value: Float): String {
+
+                return String.format("%.2f", value) }
+        }
+        binding.barChartSmart.xAxis.textSize = 12f
+        val barData = BarData(dataSet)
         barData.barWidth = 0.5f
-
+        val leftYAxis = binding.barChartSmart.axisLeft
+        leftYAxis.textSize = 12f
         binding.barChartSmart.data = barData
-
-
+        val rightYAxis = binding.barChartSmart.axisRight
+        rightYAxis.isEnabled = false
         val xAxis = binding.barChartSmart.xAxis
-        xAxis.valueFormatter = IndexAxisValueFormatter(getMonthLabels())
         xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.setDrawGridLines(false)
-        xAxis.setDrawAxisLine(true)
+        val abbreviatedMonthNames = DateFormatSymbols().shortMonths
 
-        val leftAxis = binding.barChartSmart.axisLeft
-        leftAxis.axisMinimum = 0f
+        xAxis.valueFormatter = IndexAxisValueFormatter(abbreviatedMonthNames)
+        xAxis.granularity = 1f
+        xAxis.setCenterAxisLabels(false)
+        xAxis.isGranularityEnabled = true
+        xAxis.labelCount = months.size
+        xAxis.setAvoidFirstLastClipping(true)
+        xAxis.labelRotationAngle = 0f
+        binding.barChartSmart.axisLeft.setDrawGridLines(false)
+        binding.barChartSmart.xAxis.setDrawGridLines(false)
 
-        binding.barChartSmart.description.text = "Monthly Expenses $selectedYear"
+        binding.barChartSmart.setScaleEnabled(false)
+        binding.barChartSmart.setPinchZoom(false)
 
 
 
         binding.barChartSmart.description.isEnabled = false
-        binding.barChartSmart.legend.isEnabled = false
-        binding.barChartSmart.setPinchZoom(false)
-        binding.barChartSmart.isDoubleTapToZoomEnabled = false
-        binding.barChartSmart.animateY(1000)
 
         binding.barChartSmart.invalidate()
-    }
-
-    private fun getMonthLabels(): List<String> {
-        return listOf("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
     }
 
     private fun fetchTrips() {
@@ -484,6 +653,7 @@ class HomeFragment : LoggedInFragment() {
         val pieData = PieData(dataSet)
 
         binding.pieChart.data = pieData
+        binding.pieChart.centerText = "Expense Distribution by Category"
         binding.pieChart.centerText = "Expense Distribution by Category"
         binding.pieChart.setEntryLabelTextSize(16f)
         binding.pieChart.setEntryLabelColor(Color.BLACK)

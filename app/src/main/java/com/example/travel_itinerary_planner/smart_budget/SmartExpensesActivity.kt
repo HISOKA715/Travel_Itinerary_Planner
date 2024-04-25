@@ -480,7 +480,7 @@ class SmartExpensesActivity : LoggedInActivity() {
     private fun saveSmartBudget() {
 
         val exchangeRates = mapOf(
-            "AED" to 0.27, "AFN" to 0.014, "ALL" to 0.011, "AMD" to 0.0025, "ANG" to 0.56,
+            "AED" to 0.27, "AFN" to 0.014, "ALL" to 0.011, "AMD" to 0.0026, "ANG" to 0.56,
             "AOA" to 0.0012, "ARS" to 0.0011, "AUD" to 0.64, "AWG" to 0.55, "AZN" to 0.59,
             "BAM" to 0.55, "BBD" to 0.5, "BDT" to 0.0091, "BGN" to 0.54, "BHD" to 2.65,
             "BIF" to 0.00035, "BMD" to 1.0, "BND" to 0.74, "BOB" to 0.14, "BRL" to 0.19,

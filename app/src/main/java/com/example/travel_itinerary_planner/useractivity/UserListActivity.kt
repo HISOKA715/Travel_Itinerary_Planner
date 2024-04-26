@@ -24,6 +24,18 @@ class UserListActivity : LoggedInActivity() {
             }
         }.attach()
 
+        // Handle intent to select specific tab
+        val selectedTab = intent.getStringExtra("SELECTED_TAB")
+        if (selectedTab != null) {
+            val tabIndex = when (selectedTab) {
+                "Rate" -> 0
+                "Like" -> 1
+                "Feedback" -> 2
+                else -> 0
+            }
+            binding.viewPager.setCurrentItem(tabIndex, true)
+        }
+
         binding.imageButton13.setOnClickListener {
             finish()
         }

@@ -1,10 +1,14 @@
 package com.example.travel_itinerary_planner.notification
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.bumptech.glide.Glide
+import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.R
+import com.example.travel_itinerary_planner.TAG
 import com.example.travel_itinerary_planner.databinding.NotificationBinding
 
 class NotificationDetailActivity : AppCompatActivity() {
@@ -13,19 +17,15 @@ class NotificationDetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.notification)
-
-        val title = intent.getStringExtra("notification_title") ?: "No Title"
-        val body = intent.getStringExtra("notification_body") ?: "No Body"
-        val imageUrl = intent.getStringExtra("image_url")
-
-
-        binding.title.text = title
-        binding.body.text = body
-        if (!imageUrl.isNullOrEmpty()) {
-            Glide.with(this).load(imageUrl).into(binding.imageView2)
-        }
         binding.imageButton3.setOnClickListener {
-            finish()
+            val intent = Intent(this, BottomNavigationActivity::class.java)
+            intent.putExtra("returnToHomeFragment", true)
+            startActivity(intent)
         }
+
     }
+
+
+
 }
+

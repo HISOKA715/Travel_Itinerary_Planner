@@ -87,6 +87,29 @@
                 android:background="@drawable/circle_background"
                 android:padding="10dp"
                 android:src="@drawable/baseline_navigation_24"/>
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cardViewSearchButton3"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="50dp"
+            app:cardCornerRadius="230dp"
+            app:cardElevation="4dp"
+            android:layout_marginTop="8dp">
+
+            <ImageButton
+                android:id="@+id/imageButtonSearch3"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/circle_background"
+                android:padding="10dp"
+                android:src="@drawable/baseline_center_focus_strong_30"/>
+
+
         </androidx.cardview.widget.CardView>
     </RelativeLayout>
 

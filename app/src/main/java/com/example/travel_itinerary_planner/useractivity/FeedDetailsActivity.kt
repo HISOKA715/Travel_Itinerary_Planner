@@ -1,5 +1,6 @@
 package com.example.travel_itinerary_planner.useractivity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
@@ -30,7 +31,13 @@ class FeedDetailsActivity : LoggedInActivity() {
             fetchFeedbackDetails(feedbackId)
         }
 
-        binding.imageButton13.setOnClickListener { finish() }
+        binding.imageButton13.setOnClickListener {
+            val intent = Intent(this, UserListActivity::class.java).apply {
+                intent.putExtra("SELECTED_TAB", "Feedback")
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            startActivity(intent)
+            finish() }
     }
 
     private fun fetchFeedbackDetails(feedbackId: String) {

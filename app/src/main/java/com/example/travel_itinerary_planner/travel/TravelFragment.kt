@@ -64,6 +64,7 @@ class TravelFragment : LoggedInFragment() {
     }
 
     private fun createNewTravelPlan(planName: String) {
+        if (!isAdded) return
         val userId = auth.currentUser?.uid ?: return
         val newPlan = hashMapOf(
             "PlanName" to planName,
@@ -85,6 +86,7 @@ class TravelFragment : LoggedInFragment() {
         val userId = auth.currentUser?.uid ?: return
 
         firestore.collection("users/$userId/Travel_Plan").orderBy("StartDate", Query.Direction.DESCENDING).get().addOnSuccessListener { snapshot ->
+            if (!isAdded) return@addOnSuccessListener
             val allTravelData = mutableListOf<TravelData>()
 
             snapshot.documents.forEach { document ->

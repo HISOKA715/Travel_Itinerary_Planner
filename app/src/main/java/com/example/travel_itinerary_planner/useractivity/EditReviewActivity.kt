@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import com.bumptech.glide.Glide
+import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.databinding.EditReviewBinding
 import com.example.travel_itinerary_planner.home.HomeFragment
@@ -159,9 +160,12 @@ class EditReviewActivity:LoggedInActivity() {
     }
 
     private fun navigateToHome() {
-        val intent = Intent(this, HomeFragment::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        val intent = Intent(this, BottomNavigationActivity::class.java).apply {
+            putExtra("returnToHomeFragment", true)
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+        }
         startActivity(intent)
+        finish()
     }
 
     private fun submitReview() {
@@ -197,14 +201,14 @@ class EditReviewActivity:LoggedInActivity() {
         if (rateId.isNullOrEmpty()) {
             reviewCollection.add(reviewData).addOnSuccessListener {
                 Toast.makeText(this, "Review added successfully", Toast.LENGTH_SHORT).show()
-                finish()
+                navigateToHome()
             }.addOnFailureListener { e ->
                 Toast.makeText(this, "Failed to add review: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
         } else {
             reviewCollection.document(rateId).set(reviewData).addOnSuccessListener {
                 Toast.makeText(this, "Review updated successfully", Toast.LENGTH_SHORT).show()
-                finish()
+                navigateToHome()
             }.addOnFailureListener { e ->
                 Toast.makeText(this, "Failed to update review: ${e.localizedMessage}", Toast.LENGTH_SHORT).show()
             }
@@ -223,21 +227,6 @@ class EditReviewActivity:LoggedInActivity() {
             .addOnFailureListener { e ->
                 Log.e("AddReview", "Failed to upload image: ${e.message}", e)
                 Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
-            }
-    }
-
-    private fun updateReviewInFirestore(documentId: String, rateId: String, reviewData: HashMap<String, Any>) {
-        firestore.collection("Tourism Attractions").document(documentId)
-            .collection("Review").document(rateId)
-            .set(reviewData)
-            .addOnSuccessListener {
-                Log.d("EditReview", "Review updated successfully")
-                Toast.makeText(this, "Review updated successfully", Toast.LENGTH_SHORT).show()
-                finish()
-            }
-            .addOnFailureListener { e ->
-                Log.e("EditReview", "Error updating review: ${e.message}", e)
-                Toast.makeText(this, "Failed to update review", Toast.LENGTH_SHORT).show()
             }
     }
 

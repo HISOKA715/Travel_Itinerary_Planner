@@ -12,6 +12,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.databinding.MapBinding
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,6 +26,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.Polyline
 import com.google.firebase.auth.FirebaseAuth
@@ -68,6 +70,9 @@ class MapActivity :LoggedInActivity (), OnMapReadyCallback {
         binding.imageButtonSearch2.setOnClickListener {
             val destination = LatLng(intent.getDoubleExtra("latitude", 2.0), intent.getDoubleExtra("longitude", 2.0))
             startGoogleMapsNavigation(destination)
+        }
+        binding.imageButtonSearch3.setOnClickListener {
+            centerMapOnCurrentLocation()
         }
     }
 

@@ -90,7 +90,7 @@ class HomeFragment : LoggedInFragment() {
     private fun setupRecyclerView() {
         binding.horizontalRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         binding.horizontalRecyclerView.adapter = TourismListAdapter(attractions) { attraction ->
-        }
+            }
     }
     private fun fetchTourismAttractions() {
         FirebaseFirestore.getInstance().collection("Tourism Attractions")
@@ -668,7 +668,6 @@ class HomeFragment : LoggedInFragment() {
             return String.format("%.2f", value)
         }
     }
-
 
 
 

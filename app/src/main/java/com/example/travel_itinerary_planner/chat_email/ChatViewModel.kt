@@ -14,7 +14,9 @@ class ChatViewModel : ViewModel() {
 
     private val firestore = FirebaseFirestore.getInstance()
     private val messagesLiveData = MutableLiveData<List<Message>>()
+    private val scrollToBottomEvent = MutableLiveData<Boolean>()
 
+    private var allowScrollToBottom = true
     init {
         startDataRefresh()
     }
@@ -22,7 +24,9 @@ class ChatViewModel : ViewModel() {
     fun getMessages(): LiveData<List<Message>> {
         return messagesLiveData
     }
-
+    fun getScrollToBottomEvent(): LiveData<Boolean> {
+        return scrollToBottomEvent
+    }
     private fun startDataRefresh() {
         viewModelScope.launch(Dispatchers.IO) {
             while (true) {
@@ -46,10 +50,14 @@ class ChatViewModel : ViewModel() {
                     messagesList.add(message)
                 }
                 messagesLiveData.postValue(messagesList)
+                if (allowScrollToBottom) {
+                    scrollToBottomEvent.postValue(true)
+                }
             }
             .addOnFailureListener { exception ->
 
             }
     }
+
 
 }

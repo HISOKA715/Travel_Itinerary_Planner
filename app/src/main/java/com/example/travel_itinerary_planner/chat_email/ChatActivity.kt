@@ -46,7 +46,7 @@ class ChatActivity : LoggedInActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: ChatViewModel
     private var selectedImageUri: Uri? = null
-
+    private var allowScrollToBottom = true
     private val messagesLiveData = MutableLiveData<List<Message>?>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,7 +67,24 @@ class ChatActivity : LoggedInActivity() {
 
         firestore = FirebaseFirestore.getInstance()
         auth = FirebaseAuth.getInstance()
+        viewModel.getScrollToBottomEvent().observe(this) { scrollToBottom ->
+            if (scrollToBottom) {
+                if (allowScrollToBottom) {
+                    chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                }
+            }
+        }
 
+
+        chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+                if (newState == RecyclerView.SCROLL_STATE_DRAGGING) {
+
+                    allowScrollToBottom = false
+                }
+            }
+        })
 
         setupSendMessageButton()
         viewModel.getMessages().observe(this, Observer { messages ->
@@ -127,7 +144,7 @@ class ChatActivity : LoggedInActivity() {
                             firestore.collection("Message").document(messageId)
                                 .set(message)
                                 .addOnSuccessListener {
-
+                                    chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
                                 }
                                 .addOnFailureListener { e ->
 

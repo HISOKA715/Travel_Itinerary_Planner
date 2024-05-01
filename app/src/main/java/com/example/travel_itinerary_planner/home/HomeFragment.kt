@@ -31,6 +31,11 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 import java.text.DateFormatSymbols
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -81,7 +86,7 @@ class HomeFragment : LoggedInFragment() {
         fetchTourismAttractions()
         firestore = FirebaseFirestore.getInstance()
         fetchTrips()
-        setupCurrencyYearSpinner()
+        retrieveSmartBudgetForYear()
     }
     private fun setupRecyclerView() {
         binding.horizontalRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
@@ -107,28 +112,49 @@ class HomeFragment : LoggedInFragment() {
 
             }
     }
-    private fun setupCurrencyYearSpinner(){
-        val years = mutableListOf<String>()
-        firestore.collection("SmartBudgetDetails")
+
+    private fun retrieveSmartBudgetForYear() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        firestore.collection("SmartBudget")
+            .whereEqualTo("UserID", userId)
             .get()
-            .addOnSuccessListener { querySnapshot ->
-                querySnapshot.documents.forEach { document ->
-                    val expensesDate = document.getString("ExpensesDate")
-                    if (expensesDate != null) {
-                        val year = expensesDate.substring(0, 4)
-                        if (!years.contains(year)) {
-                            years.add(year)
-                        }
-                    }
-                }
-                val yearAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, years)
-                yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                binding.yearSpinner.adapter = yearAdapter
+            .addOnSuccessListener { smartBudgetQuerySnapshot ->
+                val budgetIds = smartBudgetQuerySnapshot.documents.map { it.id }
+                setupCurrencyYearSpinner(budgetIds)
             }
             .addOnFailureListener { exception ->
             }
+    }
 
-        val currencyOptions = arrayOf(
+    private fun setupCurrencyYearSpinner(budgetIds: List<String>) {
+        val years = mutableSetOf<String>()
+        val fireCollect = firestore.collection("SmartBudgetDetails")
+        CoroutineScope(Dispatchers.IO).launch {
+            budgetIds.forEach { budgetId ->
+                val querySnapshot = fireCollect.whereEqualTo("BudgetID", budgetId).get().await()
+                querySnapshot.documents.forEach { document ->
+                    val expensesDate = document.getString("ExpensesDate")
+
+                    expensesDate?.let {
+                        val year = it.substring(0, 4)
+                        years.add(year)
+                    }
+                }
+            }
+            withContext(Dispatchers.Main) {
+                val yearAdapter = ArrayAdapter(
+                    requireContext(),
+                    android.R.layout.simple_spinner_item,
+                    years.toList()
+                )
+
+                yearAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                binding.yearSpinner.adapter = yearAdapter
+            }
+        }
+
+
+    val currencyOptions = arrayOf(
             "AED - United Arab Emirates Dirham",
             "AFN - Afghan Afghani",
             "ALL - Albanian Lek",

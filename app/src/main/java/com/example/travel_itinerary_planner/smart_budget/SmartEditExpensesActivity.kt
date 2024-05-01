@@ -263,7 +263,7 @@ class SmartEditExpensesActivity : LoggedInActivity() {
 
 
         if (expensesNotes.isEmpty()) {
-            binding.editTextEditExpensesNotes.error = "Trip name cannot be empty"
+            binding.editTextEditExpensesNotes.error = "Trip expenses notes cannot be empty"
             return
         }
         if (expensesDate.isEmpty()) {

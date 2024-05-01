@@ -523,7 +523,7 @@ class SmartExpensesActivity : LoggedInActivity() {
         val expensesCategory = intent.getStringExtra("categoryText")
 
         if (expensesNotes.isEmpty()) {
-            binding.editTextExpensesNotes.error = "Trip name cannot be empty"
+            binding.editTextExpensesNotes.error = "Trip expenses notes cannot be empty"
             return
         }
         if (expensesDate.isEmpty()) {

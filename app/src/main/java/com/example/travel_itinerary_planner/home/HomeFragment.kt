@@ -9,7 +9,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.travel_itinerary_planner.BottomNavigationActivity
@@ -17,7 +16,6 @@ import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentHomeBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.example.travel_itinerary_planner.notification.NotificationActivity
-import com.example.travel_itinerary_planner.smart_budget.SmartBudgetDetails
 import com.example.travel_itinerary_planner.tourism_attraction.RecommandActivity
 import com.example.travel_itinerary_planner.useractivity.UserListActivity
 import com.github.mikephil.charting.animation.Easing
@@ -29,10 +27,8 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
-import com.github.mikephil.charting.formatter.LargeValueFormatter
 import com.github.mikephil.charting.formatter.ValueFormatter
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.text.DateFormatSymbols
@@ -551,7 +547,8 @@ class HomeFragment : LoggedInFragment() {
     }
 
     private fun fetchTrips() {
-        firestore.collection("SmartBudget")
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        firestore.collection("SmartBudget").whereEqualTo("UserID",userId)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val tripList = mutableListOf<String>()
@@ -568,7 +565,9 @@ class HomeFragment : LoggedInFragment() {
                         }
                     }
                 }
-
+                if (tripList.isEmpty()) {
+                    tripList.add("No Smart Budget Trips")
+                }
                 tripList.reverse()
 
                 val adapter = ArrayAdapter(requireContext(), R.layout.simple_spinner_item, tripList)

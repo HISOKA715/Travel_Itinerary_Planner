@@ -201,7 +201,11 @@ class RegisterActivity : AppCompatActivity() {
                                 "Email" to emailRegister,
                                 "HomeAdd" to address,
                                 "ProfileImage" to null,
-                                "UserCategory" to "User"
+                                "UserCategory" to "User",
+                                "PreferAttraction" to 1,
+                                "PreferOther" to 1,
+                                "PreferRestaurant" to 1,
+                                "PreferShopping" to 1
                             )
 
                             val newUserDocRef = firestore.collection("users").document(uid!!)

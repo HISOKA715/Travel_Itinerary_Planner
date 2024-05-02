@@ -9,8 +9,12 @@ import com.example.travel_itinerary_planner.BottomNavigationActivity
 import com.example.travel_itinerary_planner.databinding.ActivityBookmarksBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInActivity
 import com.example.travel_itinerary_planner.profile.SocialMediaPost
+import com.google.android.gms.tasks.Task
+import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 
 class BookmarksActivity : LoggedInActivity(), BookmarksAdapter.OnItemClickListener {
     private lateinit var binding: ActivityBookmarksBinding
@@ -46,25 +50,37 @@ class BookmarksActivity : LoggedInActivity(), BookmarksAdapter.OnItemClickListen
         userId?.let { uid ->
             firestore.collection("Bookmarks")
                 .whereEqualTo("UserID", uid)
+                .orderBy("BookmarkTime", Query.Direction.DESCENDING)
                 .get()
                 .addOnSuccessListener { querySnapshot ->
                     val bookmarkList = mutableListOf<SocialMediaPost>()
+                    val bookmarkPromises = mutableListOf<Task<DocumentSnapshot>>() // To store promises for each bookmark's associated social media post
                     for (document in querySnapshot.documents) {
-                        val post = document.toObject(SocialMediaPost::class.java)
-                        if (post != null) {
-                            bookmarkList.add(post)
-                        } else {
+                        val bookmark = document.toObject(Bookmarks::class.java)
+                        val socialId = bookmark?.SocialID
+                        socialId?.let { id ->
+                            val promise = firestore.collection("SocialMedia").document(id).get()
+                            bookmarkPromises.add(promise)
                         }
                     }
-                    bookmarksAdapter.submitList(bookmarkList)
+                    Tasks.whenAllSuccess<DocumentSnapshot>(bookmarkPromises)
+                        .addOnSuccessListener { snapshots ->
+                            for (snapshot in snapshots) {
+                                val post = snapshot.toObject(SocialMediaPost::class.java)
+                                post?.let { bookmarkList.add(it) }
+                            }
+                            bookmarksAdapter.submitList(bookmarkList)
+                        }
+                        .addOnFailureListener { exception ->
+                        }
                 }
                 .addOnFailureListener { exception ->
-                    Toast.makeText(this, "Failed to fetch bookmarks: ${exception.message}", Toast.LENGTH_SHORT).show()
                 }
         } ?: run {
             Toast.makeText(this, "User ID not found", Toast.LENGTH_SHORT).show()
         }
     }
+
 
 
     override fun onItemClick(socialMediaPost: SocialMediaPost) {

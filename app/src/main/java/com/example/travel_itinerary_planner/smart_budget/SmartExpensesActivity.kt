@@ -103,6 +103,7 @@ class SmartExpensesActivity : LoggedInActivity() {
         binding.imageViewExpensesCategory.setOnClickListener {
 
             val intent = Intent(this, SmartPickCategoryActivity::class.java)
+            intent.putExtra("budgetId", budgetId)
             startActivity(intent)
         }
         binding. editTextPaymentMethod.setOnClickListener {

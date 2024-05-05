@@ -116,13 +116,23 @@ class SmartEditExpensesActivity : LoggedInActivity() {
         budgetDetailsID = intent.getStringExtra("BudgetDetailsID") ?: ""
         setDecimalInputFilter(binding.textViewEditExpensesAmount)
 
-        fetchAndPopulateData()
+        val categoryTint = intent.getStringExtra("categoryTint")
+        val categoryIcon = intent.getIntExtra("categoryIcon", 0)
+        val categoryText = intent.getStringExtra("categoryText")
+        if (categoryIcon != null && !categoryTint.isNullOrEmpty()) {
+            fetchAndPopulateDataForUpdatedCategory(categoryIcon, categoryTint)
+        } else {
+            fetchAndPopulateData()
+        }
 
         binding.imageViewEditCategory.setOnClickListener {
 
             val budgetId = intent.getStringExtra("budgetId")
-            val intent = Intent(this, SmartPickCategoryActivity::class.java)
-            intent.putExtra("budgetId", budgetId)
+            val intent = Intent(this, SmartPickCategoryActivity::class.java).apply {
+                putExtra("budgetId", budgetId)
+                putExtra("BudgetDetailsID",budgetDetailsID)
+                putExtra("fromEditExpenses", true)
+            }
             startActivity(intent)
         }
         binding. editTextEditPaymentMethod.setOnClickListener {
@@ -263,7 +273,7 @@ class SmartEditExpensesActivity : LoggedInActivity() {
 
 
         if (expensesNotes.isEmpty()) {
-            binding.editTextEditExpensesNotes.error = "Trip name cannot be empty"
+            binding.editTextEditExpensesNotes.error = "Trip expenses notes cannot be empty"
             return
         }
         if (expensesDate.isEmpty()) {
@@ -506,10 +516,10 @@ class SmartEditExpensesActivity : LoggedInActivity() {
 
     private fun fetchAndPopulateData() {
         firestore.collection("SmartBudgetDetails")
-            .document(budgetDetailsID)
+            .whereEqualTo("BudgetDetailsID", budgetDetailsID)
             .get()
-            .addOnSuccessListener { document ->
-                if (document.exists()) {
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
                     val data = document.toObject(SmartBudgetDetails::class.java)
                     data?.let { smartBudgetDetails ->
                         smartBudgetDetails.ExpensesAmount.let { binding.textViewEditExpensesAmount.setText(it) }
@@ -553,13 +563,55 @@ class SmartEditExpensesActivity : LoggedInActivity() {
                             }
                         }
                     }
-                } else {
                 }
             }
             .addOnFailureListener { exception ->
             }
     }
+    private fun fetchAndPopulateDataForUpdatedCategory(categoryIcon: Int, categoryTint: String) {
+        firestore.collection("SmartBudgetDetails")
+            .whereEqualTo("BudgetDetailsID", budgetDetailsID)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    val data = document.toObject(SmartBudgetDetails::class.java)
+                    data?.let { smartBudgetDetails ->
+                        smartBudgetDetails.ExpensesAmount.let { binding.textViewEditExpensesAmount.setText(it) }
+                        smartBudgetDetails.ExpensesNotes.let { binding.editTextEditExpensesNotes.setText(it) }
+                        smartBudgetDetails.ExpensesDate.let { binding.editTextEditExpensesDate.setText(it) }
+                        smartBudgetDetails.ExpensesPaymentMethod.let { binding.editTextEditPaymentMethod.setText(it) }
+                        smartBudgetDetails.ExpensesLocation.let { binding.editTextEditExpensesLocation.setText(it) }
+                        smartBudgetDetails.ExpensesCurrency.let { binding.textViewEditExpensesCurrency.setText(it) }
+                        if (!smartBudgetDetails.ExpensesImage.isNullOrEmpty()){
+                            binding.editTextEditExpensesPhoto.setText(smartBudgetDetails.ExpensesImage)
 
+                            val imageUrl = smartBudgetDetails.ExpensesImage
+                            Glide.with(this@SmartEditExpensesActivity)
+                                .load(imageUrl)
+                                .into(binding.imageViewEditPhoto)
+
+                            binding.imageViewEditPhoto.visibility = View.VISIBLE
+                            binding.crossExpenses.visibility = View.VISIBLE
+                        }
+
+                        category = intent.getStringExtra("categoryText")
+                        if (category!!.isNotEmpty()) {
+
+                            binding.imageViewEditCategory.setImageResource(categoryIcon)
+                            binding.imageViewEditCategory.setColorFilter(android.graphics.Color.parseColor(categoryTint))
+                            binding.textViewEditExpensesAmount.setTextColor(android.graphics.Color.parseColor(categoryTint))
+                            binding.textViewEditExpensesCurrency.setBackgroundColor(android.graphics.Color.parseColor(categoryTint))
+                            (binding.root.background as? LayerDrawable)?.let { background ->
+                                val shape = background.findDrawableByLayerId(R.id.rectangle_shape) as? GradientDrawable
+                                shape?.setStroke(2.dpToPx(this@SmartEditExpensesActivity), android.graphics.Color.parseColor(categoryTint))
+                            }
+                        }
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+            }
+    }
 
     private fun Int.dpToPx(context: Context): Int {
         return TypedValue.applyDimension(

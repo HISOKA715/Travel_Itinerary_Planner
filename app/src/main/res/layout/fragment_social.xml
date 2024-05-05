@@ -17,8 +17,7 @@
             android:minHeight="?attr/actionBarSize"
             android:theme="?attr/actionBarTheme"
             app:title="Roam Ease"
-            app:titleTextAppearance="@style/ToolbarTitleStyle"
-            app:menu="@menu/social_menu"/>
+            app:titleTextAppearance="@style/ToolbarTitleStyle"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewAllPosts"

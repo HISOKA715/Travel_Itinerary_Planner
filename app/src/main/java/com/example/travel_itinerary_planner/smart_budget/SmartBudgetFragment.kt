@@ -19,6 +19,7 @@ import com.example.travel_itinerary_planner.R
 import com.example.travel_itinerary_planner.databinding.FragmentSmartBudgetBinding
 import com.example.travel_itinerary_planner.logged_in.LoggedInFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 
@@ -142,19 +143,25 @@ class SmartBudgetFragment : LoggedInFragment(), SmartBudgetTripAdapter.OnItemCli
             }
     }
     private fun fetchTotalExpenses(budgetId: String) {
-        val smartBudgetDocRef = firestore.collection("SmartBudget").document(budgetId)
-        smartBudgetDocRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.exists()) {
-                    val totalExpensesString = document.getString("TotalExpensesAmount")
-                    val totalAmount = totalExpensesString?.toDoubleOrNull() ?: 0.0
-                    val currency = document.getString("TotalExpensesAmountCurrency") ?: ""
 
-                    val totalExpensesText = String.format("%s %.2f", currency, totalAmount)
-                    binding.totalCurrencyAmount.text = totalExpensesText
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        val smartBudgetDocRef = firestore.collection("SmartBudget")
+        smartBudgetDocRef.whereEqualTo("UserID", userId)
+            .whereEqualTo("BudgetID", budgetId)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    val smartBudget = document.toObject(SmartBudget::class.java)
 
+                    if (smartBudget != null) {
+                        val totalExpensesString = smartBudget.TotalExpensesAmount
+                        val totalAmount = totalExpensesString?.toDoubleOrNull() ?: 0.0
+                        val currency = smartBudget.TotalExpensesAmountCurrency
 
-                } else {
+                        val totalExpensesText = String.format("%s %.2f", currency, totalAmount)
+                        binding.totalCurrencyAmount.text = totalExpensesText
+
+                    }
                 }
             }
             .addOnFailureListener { exception ->
@@ -163,7 +170,9 @@ class SmartBudgetFragment : LoggedInFragment(), SmartBudgetTripAdapter.OnItemCli
 
 
     private fun fetchSmartBudgetData() {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
         firestore.collection("SmartBudget")
+            .whereEqualTo("UserID", userId)
             .get()
             .addOnSuccessListener { querySnapshot ->
                 val smartBudgetList = mutableListOf<SmartBudget>()

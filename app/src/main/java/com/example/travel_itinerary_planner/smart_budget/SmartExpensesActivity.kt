@@ -103,6 +103,7 @@ class SmartExpensesActivity : LoggedInActivity() {
         binding.imageViewExpensesCategory.setOnClickListener {
 
             val intent = Intent(this, SmartPickCategoryActivity::class.java)
+            intent.putExtra("budgetId", budgetId)
             startActivity(intent)
         }
         binding. editTextPaymentMethod.setOnClickListener {
@@ -523,7 +524,7 @@ class SmartExpensesActivity : LoggedInActivity() {
         val expensesCategory = intent.getStringExtra("categoryText")
 
         if (expensesNotes.isEmpty()) {
-            binding.editTextExpensesNotes.error = "Trip name cannot be empty"
+            binding.editTextExpensesNotes.error = "Trip expenses notes cannot be empty"
             return
         }
         if (expensesDate.isEmpty()) {
